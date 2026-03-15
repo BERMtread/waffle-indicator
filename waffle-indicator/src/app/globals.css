@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-bg: #050505;
+  --color-panel: #0a0a0a;
+  --color-card: #0d0d0d;
+  --color-border: #1e1e1e;
+  --color-border-bright: #333;
+  --color-waffle: #F5A623;
+  --color-syrup: #F5A623;
+  --color-caramel: #8B5E3C;
+  --color-maple: #C77B30;
+  --color-danger: #FF0040;
+  --color-warn: #FF6B00;
+  --color-ok: #00FF88;
+  --color-blue: #4488FF;
+  --color-text: #d4d0c8;
+  --color-text-dim: #8a8070;
+  --color-text-muted: #5a5045;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-border-bright); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+/* Ticker animation */
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ticker-animate {
+  animation: ticker-scroll 80s linear infinite;
+}
+
+/* Critical blink */
+@keyframes blink-critical {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.blink-critical {
+  animation: blink-critical 1s ease-in-out infinite;
+}
+
+/* Pulse ring */
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+.pulse-ring {
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+/* Panel styling */
+.panel {
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+}
+
+.panel-header {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-syrup);
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Syrup glow for DROWNING level */
+@keyframes syrup-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(245, 166, 35, 0.3), 0 0 20px rgba(245, 166, 35, 0.1); }
+  50% { box-shadow: 0 0 12px rgba(255, 0, 64, 0.4), 0 0 30px rgba(255, 0, 64, 0.15); }
+}
+.syrup-glow {
+  animation: syrup-glow 2s ease-in-out infinite;
+}
+
+/* Panel entrance fallback */
+@keyframes panel-enter {
+  from { transform: translateY(6px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
