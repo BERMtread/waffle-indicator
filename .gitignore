@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+
+# next.js
+.next/
+out/
+
+# build
+dist/
+build/
+tsconfig.tsbuildinfo
+
+# env files
+.env
+.env*.local
+
+# debug logs
+npm-debug.log*
+
+# os files
+.DS_Store
+Thumbs.db
+*:Zone.Identifier
+
+# vercel
+.vercel
+
+# IDE
+.vscode/
+.idea/
