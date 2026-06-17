@@ -42,24 +42,35 @@ export async function fetchCurrentTLEs(
 
 /**
  * Fetch the TLE with an epoch closest to (but not after) `date` for each satellite.
- * Uses Space-Track's gp_history class which archives all historical TLE submissions.
- * Much more accurate than back-propagating a current TLE for historical positions.
+ * Queries each satellite individually with EPOCH <= date / limit 1 so we reliably
+ * get the most recent TLE before the target date for every satellite, regardless of
+ * how many updates Space-Track has for other satellites in that window.
  */
 export async function fetchHistoricalTLEs(
   noradIds: number[],
   date: Date
 ): Promise<Record<number, TLEData>> {
   const cookie = await getSessionCookie();
-  const ids = noradIds.join(',');
-  // Look back up to 14 days to find the TLE epoch closest before the requested date
-  const endDate = formatISODate(date);
-  const startDate = formatISODate(new Date(date.getTime() - 14 * 24 * 60 * 60 * 1000));
-  const epochRange = `${startDate}--${endDate}`;
-  // orderby EPOCH desc = most recent epoch first; parseTLEBlock keeps first per NORAD ID
-  const url = `${SPACETRACK_BASE}/basicspacedata/query/class/gp_history/NORAD_CAT_ID/${ids}/EPOCH/${epochRange}/orderby/EPOCH%20desc/limit/${noradIds.length * 2}/format/tle`;
-  const res = await fetch(url, { headers: { Cookie: cookie } });
-  if (!res.ok) throw new Error(`Space-Track history fetch failed: HTTP ${res.status}`);
-  return parseTLEBlock(await res.text(), noradIds);
+  const endDate = `${formatISODate(date)}T23:59:59`;
+
+  // Parallel per-satellite queries — each returns the single most recent TLE before `date`
+  const results = await Promise.allSettled(
+    noradIds.map(async (id) => {
+      const url = `${SPACETRACK_BASE}/basicspacedata/query/class/gp_history/NORAD_CAT_ID/${id}/EPOCH/%3C%3D${endDate}/orderby/EPOCH%20desc/limit/1/format/tle`;
+      const res = await fetch(url, { headers: { Cookie: cookie } });
+      if (!res.ok) throw new Error(`Space-Track history fetch failed for ${id}: HTTP ${res.status}`);
+      const parsed = parseTLEBlock(await res.text(), [id]);
+      return { id, tle: parsed[id] };
+    })
+  );
+
+  const result: Record<number, TLEData> = {};
+  for (const r of results) {
+    if (r.status === 'fulfilled' && r.value.tle) {
+      result[r.value.id] = r.value.tle;
+    }
+  }
+  return result;
 }
 
 function formatISODate(d: Date): string {
@@ -75,7 +86,6 @@ function parseTLEBlock(text: string, noradIds: number[]): Record<number, TLEData
     const line2 = lines[i + 2];
     if (!line1?.startsWith('1 ') || !line2?.startsWith('2 ')) continue;
     const noradId = parseInt(line1.substring(2, 7).trim(), 10);
-    // Keep first occurrence only (most recent epoch when ordered desc)
     if (noradIds.includes(noradId) && !result[noradId]) {
       result[noradId] = { line1, line2 };
     }
