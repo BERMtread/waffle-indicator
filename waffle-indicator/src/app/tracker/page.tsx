@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { initSatellites, type SatRecord } from '@/lib/orbital/propagator';
 import { ALL_AOIS, type AOIData } from '@/lib/geo/aoi-data';
 import { useOrbitalPropagation } from '@/hooks/useOrbitalPropagation';
@@ -36,20 +36,66 @@ export default function TrackerPage() {
   const [satellites, setSatellites] = useState<SatRecord[]>([]);
   const [selectedAOI, setSelectedAOI] = useState<AOIData | null>(null);
   const [utcTime, setUtcTime] = useState('');
+  const [tleAge, setTleAge] = useState('LOADING...');
 
   // --- Time machine state ---
   const [simulationTime, setSimulationTime] = useState<Date | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(60);
 
-  // Initialize satellites
+  // Track which date we last fetched historical TLEs for (YYYY-MM-DD)
+  const lastTleDateRef = useRef<string | null>(null);
+
+  // Load live TLEs from Space-Track on mount
   useEffect(() => {
-    const sats = initSatellites();
-    setSatellites(sats);
+    fetch('/api/tle')
+      .then(r => r.json())
+      .then(data => {
+        setSatellites(initSatellites(data.tles));
+        setTleAge(data.source === 'fallback' ? 'FALLBACK' : 'LIVE');
+      })
+      .catch(() => {
+        setSatellites(initSatellites());
+        setTleAge('FALLBACK');
+      });
     // Default to Iran (primary AOI)
     const iran = ALL_AOIS.find(a => a.id === 'iran');
     if (iran) setSelectedAOI(iran);
   }, []);
+
+  // Fetch historical TLEs from Space-Track when simulation date changes
+  useEffect(() => {
+    if (!simulationTime) {
+      // Returned to live — re-fetch current TLEs if we were in history mode
+      if (lastTleDateRef.current !== null) {
+        lastTleDateRef.current = null;
+        fetch('/api/tle')
+          .then(r => r.json())
+          .then(data => {
+            setSatellites(initSatellites(data.tles));
+            setTleAge(data.source === 'fallback' ? 'FALLBACK' : 'LIVE');
+          })
+          .catch(() => {});
+      }
+      return;
+    }
+
+    // Only re-fetch when the calendar date changes (not every second of playback)
+    const dateStr = simulationTime.toISOString().slice(0, 10);
+    if (dateStr === lastTleDateRef.current) return;
+    lastTleDateRef.current = dateStr;
+
+    setTleAge('LOADING...');
+    fetch(`/api/tle/history?date=${dateStr}`)
+      .then(r => r.json())
+      .then(data => {
+        setSatellites(initSatellites(data.tles));
+        setTleAge(`HIST:${dateStr}`);
+      })
+      .catch(() => {
+        setTleAge('FALLBACK');
+      });
+  }, [simulationTime]);
 
   // UTC clock
   useEffect(() => {
@@ -70,10 +116,9 @@ export default function TrackerPage() {
       setSimulationTime(prev => {
         if (!prev) return null;
         const next = new Date(prev.getTime() + 1000 * playbackSpeed);
-        // Stop if we've caught up to now
         if (next.getTime() >= Date.now()) {
           setIsPlaying(false);
-          return null; // Return to live
+          return null;
         }
         return next;
       });
@@ -93,13 +138,10 @@ export default function TrackerPage() {
   // Alignment focus intelligence
   const alignmentFocus = useAlignmentFocus(allCoverage, ALL_AOIS, satellites, positions);
 
-  const tleAge = 'HARDCODED';
-
   // Handle rewind to event
   const handleRewindToEvent = useCallback((time: Date, aoiId: string) => {
     setSimulationTime(time);
     setIsPlaying(false);
-    // Select the AOI associated with this event
     const aoi = ALL_AOIS.find(a => a.id === aoiId);
     if (aoi) setSelectedAOI(aoi);
   }, []);
@@ -235,8 +277,8 @@ export default function TrackerPage() {
       {/* Footer */}
       <footer className="flex items-center justify-between px-4 py-1.5 bg-[var(--color-panel)] border-t border-[var(--color-border)] text-[8px] text-[var(--color-text-muted)]">
         <span>🍯 NOT FINANCIAL ADVICE — EDUCATIONAL / OSINT TOOL</span>
-        <span>$ASTS 🛰 SYRUP METER — CELESTRAK.ORG — POLYGON COVERAGE ENGINE</span>
+        <span>$ASTS 🛰 SYRUP METER — SPACE-TRACK.ORG — POLYGON COVERAGE ENGINE</span>
       </footer>
     </div>
   );
-}
+            }
