@@ -2,10 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { type SatRecord, type SatPosition, getAllPositions, getGroundTrack } from '@/lib/orbital/propagator';
-import { applyEventOverrides } from '@/lib/orbital/event-overrides';
 
-const PREDICTED_DURATION_MIN = 90;  // 90-minute forward prediction
-const PREDICTED_STEP_MIN = 1;       // 1-minute resolution
+const PREDICTED_DURATION_MIN = 90; // 90-minute forward prediction
+const PREDICTED_STEP_MIN = 1;      // 1-minute resolution
 const PREDICTED_REFRESH_MS = 10_000; // Recompute predicted paths every 10s
 
 export type PredictedPath = { satId: string; color: string; points: { lat: number; lng: number }[] };
@@ -56,8 +55,8 @@ export function useOrbitalPropagation(
           ? satellites.filter(s => new Date(s.meta.launched) <= simTimeRef.current!)
           : satellites;
 
-        const rawPositions = getAllPositions(activeSats, now);
-        const newPositions = applyEventOverrides(rawPositions, simTimeRef.current);
+        // Use real SGP4-propagated positions from historical TLEs — no overrides
+        const newPositions = getAllPositions(activeSats, now);
         setPositions(newPositions);
 
         // Update trails (keep last 60 points)
