@@ -18,6 +18,9 @@ export const SATELLITES: SatelliteMeta[] = [
   { id: 'bb4', name: 'BlueBird 4', codename: 'BLUEBIRD-E', noradId: 61049, type: 'block1', weight: 1.5, color: '#FF6B35', arraySize: '64 m²', launched: '2024-09-12' },
   { id: 'bb5', name: 'BlueBird 5', codename: 'BLUEBIRD-B', noradId: 61046, type: 'block1', weight: 1.5, color: '#FF6B35', arraySize: '64 m²', launched: '2024-09-12' },
   { id: 'bb6', name: 'BlueBird 6', codename: 'BLOCK-2', noradId: 67232, type: 'block2', weight: 2.5, color: '#00FF88', arraySize: '223 m²', launched: '2025-12-24' },
+  { id: 'bb8', name: 'BlueBird 8', codename: 'BLUEBIRD OBJECT A', noradId: 69589, type: 'block2', weight: 2.5, color: '#00FF88', arraySize: '223 m²', launched: '2026-06-17' },
+  { id: 'bb9', name: 'BlueBird 9', codename: 'BLUEBIRD OBJECT B', noradId: 69590, type: 'block2', weight: 2.5, color: '#00FF88', arraySize: '223 m²', launched: '2026-06-17' },
+  { id: 'bb10', name: 'BlueBird 10', codename: 'BLUEBIRD OBJECT C', noradId: 69591, type: 'block2', weight: 2.5, color: '#00FF88', arraySize: '223 m²', launched: '2026-06-17' },
 ];
 
 export const NORAD_IDS = SATELLITES.map(s => s.noradId);
