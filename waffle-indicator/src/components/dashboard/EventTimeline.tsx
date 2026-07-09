@@ -43,7 +43,7 @@ export function EventTimeline({ onRewindToEvent, simulationTime }: Props) {
                 <div className="flex items-center gap-2">
                   <span className="text-[var(--color-text-dim)]">{dateStr}</span>
                   <span className="font-bold" style={{ color: event.color }}>
-                    SYRUP {event.level.toFixed(1)}
+                    {event.unscored ? 'SYRUP N/A' : `SYRUP ${event.level.toFixed(1)}`}
                   </span>
                 </div>
                 <div className="text-[var(--color-text)] truncate">

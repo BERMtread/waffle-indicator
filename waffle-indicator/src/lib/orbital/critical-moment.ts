@@ -3,38 +3,33 @@ import { footprintRadius, haversine } from '../geo/coverage-check';
 import { EARTH_RADIUS_KM } from './constants';
 
 /**
- * Critical-moment methodology (v3).
+ * Phase / best-pass methodology (v4).
  *
- * v2 asked "how much is a whole region covered over a day" — and found the answer
- * is "always, roughly the same, every day", so it carried no signal. The sharper
- * question for a specific operation is narrower: at the exact critical instant
- * (strike kickoff, a rescue extraction), was an ASTS "waffle" actually overhead
- * the specific target — or, if not, how close in time was the nearest pass?
+ * A single kickoff timestamp is the wrong yardstick for an operation that unfolds
+ * over time. A decapitation raid, for example, has an ingress, an assault, and an
+ * exfiltration — and the exfil (with the high-value target aboard) is often the
+ * most sensitive phase of all. So each operation is broken into its critical
+ * PHASES, each with its own time window and point target, and scored on the single
+ * best (most directly overhead) satellite pass during that window.
  *
- * Because the Block-1 BlueBirds fly as a single-plane train, any given point on
- * the ground is only inside a footprint during a handful of short passes per day.
- * So coincidence with a critical moment is genuinely informative: a pass within a
- * few minutes is a near-hit; the nearest pass being an hour away is a clean miss.
+ * score = 10 · sin(bestElevationDeg)
+ *   90° (straight overhead) → 10 ; 30° → 5.0 ; 11° (grazing) → 1.9 ; no pass → 0.
  *
- * criticalScore = 10 · exp(-gap / 15), where `gap` is the minutes between the
- * critical moment and the nearest instant the target is inside any footprint.
- * gap = 0 → 10 (overhead at the moment); gap = 15 min → ~3.7; gap ≥ ~1h → ~0.
+ * Elevation is the natural quality weight: a near-overhead pass gives the array a
+ * short slant range and a near-nadir look; a low pass on the horizon barely sees
+ * the target at all.
  */
 
-export interface CriticalMomentResult {
-  target: { lat: number; lng: number };
-  t0: string;
-  windowMin: number;
-  coveredAtMoment: boolean;
-  satsAtMoment: string[];
-  bestElevAtMomentDeg: number;
-  nearestPassGapMin: number;      // absolute minutes to nearest coverage
-  nearestPassSignedMin: number | null; // negative = before t0, positive = after
-  nearestPassSats: string[];
-  nearestPassElevDeg: number;
-  passesInWindow: number;
-  maxConcurrentInWindow: number;
-  criticalScore: number;
+export interface PhasePass {
+  bestElevationDeg: number;
+  passStart: string;       // ISO time the best pass entered the footprint
+  passSats: string[];      // codename(s) contributing to the best pass
+  passesInWindow: number;  // distinct passes over the target during the window
+  coveredMinutes: number;  // minutes with >=1 sat overhead during the window
+}
+
+export interface PhaseResult extends PhasePass {
+  score: number;
 }
 
 function pointElevationDeg(satLat: number, satLng: number, satAltKm: number, tLat: number, tLng: number) {
@@ -47,77 +42,62 @@ function pointElevationDeg(satLat: number, satLng: number, satAltKm: number, tLa
   return { dist, elev: Math.max(0, elev) };
 }
 
-/** Which satellites cover a point target at time t, and the best elevation. */
-function stateAt(satellites: SatRecord[], t: Date, tLat: number, tLng: number) {
-  const sats: string[] = [];
-  let bestElev = 0;
-  for (const sat of satellites) {
-    const pos = getPosition(sat, t);
-    if (!pos) continue;
-    const fp = footprintRadius(pos.alt);
-    const { dist, elev } = pointElevationDeg(pos.lat, pos.lng, pos.alt, tLat, tLng);
-    if (dist <= fp) {
-      sats.push(sat.meta.codename || sat.meta.id);
-      if (elev > bestElev) bestElev = elev;
-    }
-  }
-  return { sats, bestElev };
+export function elevationToScore(elevDeg: number): number {
+  return Math.round(10 * Math.sin((elevDeg * Math.PI) / 180) * 10) / 10;
 }
 
-export function scoreCriticalMoment(
+/**
+ * Scan [start, end] and return the highest-elevation pass over a point target,
+ * plus how many passes occurred and total minutes covered.
+ */
+export function scorePhase(
   satellites: SatRecord[],
   target: { lat: number; lng: number },
-  t0: Date,
-  windowMin = 240,
-  stepSeconds = 15,
-): CriticalMomentResult {
+  start: Date,
+  end: Date,
+  stepSeconds = 10,
+): PhaseResult {
   const { lat, lng } = target;
-  const at0 = stateAt(satellites, t0, lat, lng);
+  const steps = Math.floor((end.getTime() - start.getTime()) / (stepSeconds * 1000));
 
-  const n = Math.floor((windowMin * 60) / stepSeconds);
-  const covered: boolean[] = [];
-  const which: string[][] = [];
-  const elevs: number[] = [];
-  let maxConcurrent = 0;
-  for (let i = -Math.floor(n / 2); i <= Math.floor(n / 2); i++) {
-    const t = new Date(t0.getTime() + i * stepSeconds * 1000);
-    const st = stateAt(satellites, t, lat, lng);
-    covered.push(st.sats.length > 0);
-    which.push(st.sats);
-    elevs.push(st.bestElev);
-    if (st.sats.length > maxConcurrent) maxConcurrent = st.sats.length;
-  }
+  let bestElev = 0, bestStart: Date | null = null;
+  const bestSats = new Set<string>();
+  let passes = 0, inPass = false, coveredSteps = 0;
+  let curPeak = 0, curStart: Date | null = null, curSats = new Set<string>();
 
-  const center = Math.floor(covered.length / 2);
-  let gap: number | null = null;
-  let signed: number | null = null;
-  let npIdx = center;
-  if (covered[center]) { gap = 0; signed = 0; }
-  else {
-    for (let r = 1; r < covered.length; r++) {
-      const lo = center - r, hi = center + r;
-      if (lo >= 0 && covered[lo]) { gap = (r * stepSeconds) / 60; signed = -gap; npIdx = lo; break; }
-      if (hi < covered.length && covered[hi]) { gap = (r * stepSeconds) / 60; signed = gap; npIdx = hi; break; }
+  for (let i = 0; i <= steps; i++) {
+    const t = new Date(start.getTime() + i * stepSeconds * 1000);
+    let peak = 0;
+    const sats: string[] = [];
+    for (const sat of satellites) {
+      const pos = getPosition(sat, t);
+      if (!pos) continue;
+      const fp = footprintRadius(pos.alt);
+      const { dist, elev } = pointElevationDeg(pos.lat, pos.lng, pos.alt, lat, lng);
+      if (dist <= fp) { sats.push(sat.meta.codename || sat.meta.id); if (elev > peak) peak = elev; }
     }
-    if (gap === null) { gap = windowMin / 2; signed = null; }
+    if (sats.length > 0) {
+      coveredSteps++;
+      if (!inPass) { inPass = true; passes++; curPeak = 0; curStart = t; curSats = new Set(); }
+      if (peak > curPeak) { curPeak = peak; }
+      sats.forEach((s) => curSats.add(s));
+      if (curPeak >= bestElev && curPeak > 0) {
+        // provisional: promote when this pass's running peak beats the best
+      }
+    } else if (inPass) {
+      // close pass; check if it was the best
+      if (curPeak > bestElev) { bestElev = curPeak; bestStart = curStart; bestSats.clear(); curSats.forEach((s) => bestSats.add(s)); }
+      inPass = false;
+    }
   }
-
-  let passes = 0, run = false;
-  for (const c of covered) { if (c && !run) { passes++; run = true; } else if (!c) run = false; }
+  if (inPass && curPeak > bestElev) { bestElev = curPeak; bestStart = curStart; bestSats.clear(); curSats.forEach((s) => bestSats.add(s)); }
 
   return {
-    target,
-    t0: t0.toISOString(),
-    windowMin,
-    coveredAtMoment: covered[center],
-    satsAtMoment: at0.sats,
-    bestElevAtMomentDeg: Math.round(at0.bestElev * 10) / 10,
-    nearestPassGapMin: Math.round(gap * 10) / 10,
-    nearestPassSignedMin: signed === null ? null : Math.round(signed * 10) / 10,
-    nearestPassSats: which[npIdx],
-    nearestPassElevDeg: Math.round(elevs[npIdx] * 10) / 10,
+    bestElevationDeg: Math.round(bestElev * 10) / 10,
+    passStart: bestStart ? bestStart.toISOString() : '',
+    passSats: [...bestSats].sort(),
     passesInWindow: passes,
-    maxConcurrentInWindow: maxConcurrent,
-    criticalScore: Math.round(10 * Math.exp(-gap / 15) * 10) / 10,
+    coveredMinutes: Math.round((coveredSteps * stepSeconds / 60) * 10) / 10,
+    score: elevationToScore(bestElev),
   };
 }

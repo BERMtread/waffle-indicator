@@ -1,24 +1,23 @@
-export interface CriticalMoment {
-  targetName: string;
+export interface OpPhase {
+  id: string;
+  name: string;
   targetLat: number;
   targetLng: number;
-  coveredAtMoment: boolean;      // was ≥1 waffle overhead the target at the exact critical instant
-  satsAtMoment: string[];        // codenames overhead at t0
-  bestElevAtMomentDeg: number;   // best look angle at t0 (0 if none overhead)
-  nearestPassGapMin: number;     // minutes to the nearest instant the target is inside a footprint
-  nearestPassSignedMin: number | null; // negative = pass before t0, positive = after (null = none within window)
-  nearestPassSats: string[];     // codename(s) of the nearest pass
-  nearestPassElevDeg: number;    // best look angle of the nearest pass
-  passesInWindow: number;        // distinct passes over the target within the search window
-  windowMin: number;             // search window width (minutes)
-  timeConfidence: 'confirmed' | 'approx' | 'unconfirmed-time';
-  note: string;                  // sourcing note on the critical timestamp
+  start: string;               // ISO 8601 UTC — phase window start
+  end: string;                 // ISO 8601 UTC — phase window end
+  confidence: 'confirmed' | 'approx' | 'time-unconfirmed';
+  score: number;               // 10·sin(bestElevationDeg)
+  bestElevationDeg: number;    // peak elevation of the best pass in the window
+  passStart: string;           // ISO time the best pass entered the footprint ('' = none)
+  passSats: string[];          // codename(s) of the best pass
+  passesInWindow: number;
+  coveredMinutes: number;      // minutes with >=1 waffle overhead during the phase
 }
 
 export interface CorrelationEvent {
   id: string;
-  date: string; // ISO 8601 UTC — the critical moment (op kickoff / extraction)
-  level: number; // criticalScore 0–10 = 10·exp(-gap/15)
+  date: string;   // ISO 8601 UTC — best-pass moment (or phase start if no pass)
+  level: number;  // opScore = max phase score
   label: string;
   shortLabel: string;
   sats: string[];
@@ -26,185 +25,248 @@ export interface CorrelationEvent {
   color: string;
   type: 'CORRELATED' | 'ALIGNMENT';
   parentOp?: string;
-  critical?: CriticalMoment;
+  unscored?: boolean; // true when no reliable time-of-day exists (e.g. Hormuz)
+  note: string;
+  phases: OpPhase[];
 }
 
 /**
- * v3 — Critical-moment methodology. Scope narrowed to three real operations plus
- * the Epic Fury sub-events, each scored on a single question: at the exact critical
- * instant, was an ASTS waffle overhead the specific target — and if not, how close
- * in time was the nearest pass? level = 10·exp(-gap/15). See critical-moment.ts.
+ * v4 — Phase / best-pass methodology.
  *
- * All timestamps are researched to the reported kickoff/extraction time (UTC).
- * Rescue times are approximate (±); the Hormuz self-defense strike has no reported
- * time of day (timeConfidence flags this per event).
+ * Each operation is broken into its critical PHASES (ingress, assault, exfil,
+ * nuclear strike, CSAR extraction, ...), each with a researched time window and a
+ * point target. A phase scores 10·sin(bestElevationDeg) on the single most directly
+ * overhead ASTS pass during its window; the op-level `level` is the best phase.
+ *
+ * This fixes the single-instant flaw: Op. Absolute Resolve's kickoff had no pass,
+ * but its exfil phase caught a 61° near-overhead pass (8.7). Epic Fury's strength is
+ * the Fordow nuclear phase (58°), not the grazing Tehran opening. The Hormuz strike
+ * has no reported time of day, so it is left `unscored` rather than fabricated.
  */
 
 export const CORRELATION_EVENTS: CorrelationEvent[] = [
   {
     id: 'rising-lion',
     date: '2025-06-12T23:30:00Z',
-    level: 0.1,
-    label: 'Op. Rising Lion — Israel opens strikes on Iran',
-    shortLabel: 'Rising Lion',
-    sats: ["BB5", "BB1"],
+    level: 0.0,
+    label: "Op. Rising Lion \u2014 Israel opens strikes on Iran",
+    shortLabel: "Rising Lion",
+    sats: [],
     aoiId: 'iran',
     color: '#00FF88',
     type: 'ALIGNMENT',
-    critical: {
-      targetName: "Tehran (leadership/air-defense, first wave)",
-      targetLat: 35.69,
-      targetLng: 51.39,
-      coveredAtMoment: false,
-      satsAtMoment: [],
-      bestElevAtMomentDeg: 0.0,
-      nearestPassGapMin: 69.8,
-      nearestPassSignedMin: 69.8,
-      nearestPassSats: ["BB5", "BB1"],
-      nearestPassElevDeg: 10.3,
-      passesInWindow: 4,
-      windowMin: 240,
-      timeConfidence: 'confirmed',
-      note: "First IAF wave ~03:00 IRST 13 Jun 2025",
-    },
+    note: "First IAF wave ~03:00 IRST 13 Jun 2025",
+    phases: [
+      {
+        id: 'opening',
+        name: "Opening wave \u2014 leadership & SEAD (Tehran)",
+        targetLat: 35.69,
+        targetLng: 51.39,
+        start: '2025-06-12T23:30:00Z',
+        end: '2025-06-13T00:15:00Z',
+        confidence: 'confirmed',
+        score: 0.0,
+        bestElevationDeg: 0,
+        passStart: "",
+        passSats: [],
+        passesInWindow: 0,
+        coveredMinutes: 0,
+      },
+      {
+        id: 'natanz',
+        name: "Natanz enrichment strike",
+        targetLat: 33.72,
+        targetLng: 51.73,
+        start: '2025-06-12T23:30:00Z',
+        end: '2025-06-13T00:45:00Z',
+        confidence: 'confirmed',
+        score: 0.0,
+        bestElevationDeg: 0,
+        passStart: "",
+        passSats: [],
+        passesInWindow: 0,
+        coveredMinutes: 0,
+      },
+    ],
   },
   {
     id: 'absolute-resolve',
-    date: '2026-01-03T06:01:00Z',
-    level: 0.1,
-    label: 'Op. Absolute Resolve — US raid captures Maduro',
-    shortLabel: 'Absolute Resolve',
-    sats: ["BB1"],
+    date: '2026-01-03T07:57:10+00:00',
+    level: 8.7,
+    label: "Op. Absolute Resolve \u2014 US raid captures Maduro",
+    shortLabel: "Absolute Resolve",
+    sats: ["BB4"],
     aoiId: 'venezuela',
-    color: '#00FF88',
-    type: 'ALIGNMENT',
-    critical: {
-      targetName: "Caracas (Maduro compound)",
-      targetLat: 10.49,
-      targetLng: -66.88,
-      coveredAtMoment: false,
-      satsAtMoment: [],
-      bestElevAtMomentDeg: 0.0,
-      nearestPassGapMin: 66.5,
-      nearestPassSignedMin: 66.5,
-      nearestPassSats: ["BB1"],
-      nearestPassElevDeg: 10.2,
-      passesInWindow: 4,
-      windowMin: 240,
-      timeConfidence: 'confirmed',
-      note: "Delta Force crossed into VE airspace 02:01 VET 3 Jan 2026",
-    },
+    color: '#FF0040',
+    type: 'CORRELATED',
+    note: "Delta Force ingress 02:01 VET; back over water with Maduro <3h later",
+    phases: [
+      {
+        id: 'assault',
+        name: "Ingress & assault on Maduro compound (Caracas)",
+        targetLat: 10.49,
+        targetLng: -66.88,
+        start: '2026-01-03T06:01:00Z',
+        end: '2026-01-03T07:00:00Z',
+        confidence: 'confirmed',
+        score: 0.0,
+        bestElevationDeg: 0,
+        passStart: "",
+        passSats: [],
+        passesInWindow: 0,
+        coveredMinutes: 0,
+      },
+      {
+        id: 'exfil',
+        name: "Exfiltration with Maduro",
+        targetLat: 10.49,
+        targetLng: -66.88,
+        start: '2026-01-03T07:00:00Z',
+        end: '2026-01-03T09:00:00Z',
+        confidence: 'confirmed',
+        score: 8.7,
+        bestElevationDeg: 61.0,
+        passStart: "2026-01-03T07:57:10+00:00",
+        passSats: ["BB4"],
+        passesInWindow: 5,
+        coveredMinutes: 39.8,
+      },
+    ],
   },
   {
     id: 'epic-fury',
-    date: '2026-02-28T06:15:00Z',
-    level: 8.1,
-    label: 'Op. Epic Fury — US/Israel open strikes on Iran',
-    shortLabel: 'Epic Fury',
+    date: '2026-02-28T07:53:50+00:00',
+    level: 8.5,
+    label: "Op. Epic Fury \u2014 US/Israel strike Iran",
+    shortLabel: "Epic Fury",
     sats: ["BW3"],
     aoiId: 'iran',
     color: '#FF0040',
     type: 'CORRELATED',
-    critical: {
-      targetName: "Tehran (Khamenei/command nodes)",
-      targetLat: 35.69,
-      targetLng: 51.39,
-      coveredAtMoment: false,
-      satsAtMoment: [],
-      bestElevAtMomentDeg: 0.0,
-      nearestPassGapMin: 3.2,
-      nearestPassSignedMin: 3.2,
-      nearestPassSats: ["BW3"],
-      nearestPassElevDeg: 10.3,
-      passesInWindow: 3,
-      windowMin: 240,
-      timeConfidence: 'confirmed',
-      note: "CENTCOM airstrikes begin 01:15 ET 28 Feb 2026",
-    },
+    note: "CENTCOM strikes begin 01:15 ET 28 Feb 2026",
+    phases: [
+      {
+        id: 'opening',
+        name: "Opening strikes / Khamenei decapitation (Tehran)",
+        targetLat: 35.69,
+        targetLng: 51.39,
+        start: '2026-02-28T06:15:00Z',
+        end: '2026-02-28T07:15:00Z',
+        confidence: 'confirmed',
+        score: 1.9,
+        bestElevationDeg: 11.0,
+        passStart: "2026-02-28T06:18:10+00:00",
+        passSats: ["BW3"],
+        passesInWindow: 1,
+        coveredMinutes: 2.2,
+      },
+      {
+        id: 'nuclear',
+        name: "Nuclear facility strikes (Fordow)",
+        targetLat: 34.88,
+        targetLng: 51.59,
+        start: '2026-02-28T06:15:00Z',
+        end: '2026-02-28T08:15:00Z',
+        confidence: 'confirmed',
+        score: 8.5,
+        bestElevationDeg: 58.3,
+        passStart: "2026-02-28T07:53:50+00:00",
+        passSats: ["BW3"],
+        passesInWindow: 1,
+        coveredMinutes: 7.2,
+      },
+    ],
   },
   {
     id: 'ef-pilot-rescue',
-    date: '2026-04-03T08:10:00Z',
-    level: 8.2,
-    label: 'Epic Fury — Dude 44 pilot CSAR recovery',
-    shortLabel: 'Dude 44 Pilot',
+    date: '2026-04-03T08:13:00+00:00',
+    level: 1.9,
+    label: "Epic Fury \u2014 Dude 44 pilot CSAR recovery",
+    shortLabel: "Dude 44 Pilot",
     sats: ["BB6"],
     aoiId: 'iran',
-    color: '#FF0040',
-    type: 'CORRELATED',
+    color: '#00FF88',
+    type: 'ALIGNMENT',
     parentOp: 'epic-fury',
-    critical: {
-      targetName: "Kohgiluyeh & Boyer-Ahmad (Dude 44 pilot)",
-      targetLat: 30.7,
-      targetLng: 51.6,
-      coveredAtMoment: false,
-      satsAtMoment: [],
-      bestElevAtMomentDeg: 0.0,
-      nearestPassGapMin: 3.0,
-      nearestPassSignedMin: 3.0,
-      nearestPassSats: ["BB6"],
-      nearestPassElevDeg: 10.2,
-      passesInWindow: 3,
-      windowMin: 240,
-      timeConfidence: 'approx',
-      note: "F-15E down ~04:40 IRST; pilot recovered ~7h later, 3 Apr 2026",
-    },
+    note: "F-15E down ~04:40 IRST 3 Apr; pilot recovered ~7h later",
+    phases: [
+      {
+        id: 'recovery',
+        name: "Pilot extraction (Kohgiluyeh & Boyer-Ahmad)",
+        targetLat: 30.7,
+        targetLng: 51.6,
+        start: '2026-04-03T07:00:00Z',
+        end: '2026-04-03T09:00:00Z',
+        confidence: 'approx',
+        score: 1.9,
+        bestElevationDeg: 11.0,
+        passStart: "2026-04-03T08:13:00+00:00",
+        passSats: ["BB6"],
+        passesInWindow: 1,
+        coveredMinutes: 2.3,
+      },
+    ],
   },
   {
     id: 'ef-wso-rescue',
-    date: '2026-04-04T23:30:00Z',
+    date: '2026-04-04T22:30:00Z',
     level: 0.0,
-    label: 'Epic Fury — Dude 44 WSO CSAR recovery',
-    shortLabel: 'Dude 44 WSO',
+    label: "Epic Fury \u2014 Dude 44 WSO CSAR recovery",
+    shortLabel: "Dude 44 WSO",
     sats: [],
     aoiId: 'iran',
     color: '#00FF88',
     type: 'ALIGNMENT',
     parentOp: 'epic-fury',
-    critical: {
-      targetName: "Near Yasuj (Dude 44 WSO)",
-      targetLat: 30.67,
-      targetLng: 51.59,
-      coveredAtMoment: false,
-      satsAtMoment: [],
-      bestElevAtMomentDeg: 0.0,
-      nearestPassGapMin: 120.0,
-      nearestPassSignedMin: null,
-      nearestPassSats: [],
-      nearestPassElevDeg: 0.0,
-      passesInWindow: 0,
-      windowMin: 240,
-      timeConfidence: 'approx',
-      note: "WSO recovered ~03:00 IRST 5 Apr 2026 near Yasuj",
-    },
+    note: "WSO extracted ~03:00 IRST 5 Apr near Yasuj",
+    phases: [
+      {
+        id: 'extraction',
+        name: "WSO extraction (near Yasuj)",
+        targetLat: 30.67,
+        targetLng: 51.59,
+        start: '2026-04-04T22:30:00Z',
+        end: '2026-04-05T00:30:00Z',
+        confidence: 'approx',
+        score: 0.0,
+        bestElevationDeg: 0,
+        passStart: "",
+        passSats: [],
+        passesInWindow: 0,
+        coveredMinutes: 0,
+      },
+    ],
   },
   {
     id: 'ef-hormuz-strike',
-    date: '2026-05-25T12:00:00Z',
-    level: 1.1,
-    label: 'Epic Fury ceasefire — US Hormuz self-defense strikes',
-    shortLabel: 'Hormuz Strikes',
-    sats: ["BB6"],
+    date: '2026-05-25T17:57:40+00:00',
+    level: 0.0,
+    label: "Epic Fury ceasefire \u2014 US Hormuz self-defense strikes",
+    shortLabel: "Hormuz Strikes",
+    sats: ["BB1", "BB5", "BB6"],
     aoiId: 'hormuz',
-    color: '#00FF88',
+    color: '#888888',
     type: 'ALIGNMENT',
     parentOp: 'epic-fury',
-    critical: {
-      targetName: "Bandar Abbas / Strait of Hormuz",
-      targetLat: 27.18,
-      targetLng: 56.28,
-      coveredAtMoment: false,
-      satsAtMoment: [],
-      bestElevAtMomentDeg: 0.0,
-      nearestPassGapMin: 33.0,
-      nearestPassSignedMin: -33.0,
-      nearestPassSats: ["BB6"],
-      nearestPassElevDeg: 10.5,
-      passesInWindow: 4,
-      windowMin: 240,
-      timeConfidence: 'unconfirmed-time',
-      note: "US 'self-defense' strikes on IRGC boats + Bandar Abbas SAM, 25 May 2026 (time of day not reported)",
-    },
+    unscored: true,
+    note: "Strikes on IRGC boats + Bandar Abbas SAM 25 May 2026; time of day not reported",
+    phases: [
+      {
+        id: 'strike',
+        name: "Self-defense strikes (Bandar Abbas / Hormuz)",
+        targetLat: 27.18,
+        targetLng: 56.28,
+        start: '2026-05-25T00:00:00Z',
+        end: '2026-05-26T00:00:00Z',
+        confidence: 'time-unconfirmed',
+        score: 10.0,
+        bestElevationDeg: 85.6,
+        passStart: "2026-05-25T17:57:40+00:00",
+        passSats: ["BB1", "BB5", "BB6"],
+        passesInWindow: 20,
+        coveredMinutes: 132.7,
+      },
+    ],
   },
 ];
 

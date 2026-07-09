@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { initSatellites, getAllPositions } from '@/lib/orbital/propagator';
 import { computeWaffleLevel } from '@/lib/orbital/alignment-scorer';
 import { scoreCoverageWindow } from '@/lib/orbital/coverage-window';
-import { scoreCriticalMoment } from '@/lib/orbital/critical-moment';
+import { scorePhase } from '@/lib/orbital/critical-moment';
 import { ALL_AOIS } from '@/lib/geo/aoi-data';
 
 export const dynamic = 'force-dynamic';
@@ -22,23 +22,22 @@ export async function GET(request: Request) {
     }
     const coverage = computeWaffleLevel(positions, aoi);
 
-    // Critical-moment methodology (v3): ?mode=critical&lat=&lng=&at=<ISO>
-    // Was a waffle overhead a specific point at a specific instant — if not, how
-    // close was the nearest pass? Defaults to the AOI centroid and now.
-    if (searchParams.get('mode') === 'critical') {
+    // Phase / best-pass methodology (v4): ?mode=phase&lat=&lng=&start=<ISO>&end=<ISO>
+    // Best (most overhead) pass over a point target during a phase window.
+    // Defaults to the AOI centroid and a ±60 min window around now.
+    if (searchParams.get('mode') === 'phase') {
       const lat = Number(searchParams.get('lat'));
       const lng = Number(searchParams.get('lng'));
       const target = Number.isFinite(lat) && Number.isFinite(lng)
         ? { lat, lng }
         : { lat: aoi.centroid.lat, lng: aoi.centroid.lng };
-      const atParam = searchParams.get('at');
-      const at = atParam ? new Date(atParam) : now;
-      const windowMin = Math.min(1440, Math.max(30, Number(searchParams.get('windowMin')) || 240));
-      const critical = scoreCriticalMoment(satellites, target, at, windowMin);
+      const start = searchParams.get('start') ? new Date(searchParams.get('start')!) : new Date(now.getTime() - 3600_000);
+      const end = searchParams.get('end') ? new Date(searchParams.get('end')!) : new Date(now.getTime() + 3600_000);
+      const phase = scorePhase(satellites, target, start, end);
       return NextResponse.json({
         aoiId: aoi.id,
-        methodology: 'critical-moment-v3',
-        critical,
+        methodology: 'phase-best-pass-v4',
+        phase,
         timestamp: now.toISOString(),
       });
     }

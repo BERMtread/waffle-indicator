@@ -4,12 +4,12 @@ import Link from 'next/link';
 import { Ticker } from '@/components/dashboard/Ticker';
 
 const TIMELINE = [
-  { date: 'May 25, 2026', score: 1.1, gap: 'nearest waffle pass 33 min before', event: 'Epic Fury ceasefire — US "self-defense" strikes on IRGC mine-laying boats + Bandar Abbas SAM site. Time of day not reported.', type: 'miss', conf: 'time unconfirmed' },
-  { date: 'Apr 5, 2026', score: 0.0, gap: 'no pass within \u00b1120 min', event: 'Epic Fury CSAR — F-15E "Dude 44" WSO extracted (~03:00 IRST) near Yasuj after ~46h evading. Critical point: crash site.', type: 'miss', conf: 'time approximate' },
-  { date: 'Apr 3, 2026', score: 8.2, gap: 'nearest waffle pass 3 min after', event: 'Epic Fury CSAR — "Dude 44" pilot recovered ~7h after the F-15E was downed in Kohgiluyeh & Boyer-Ahmad. Critical point: recovery site.', type: 'correlation', conf: 'time approximate' },
-  { date: 'Feb 28, 2026', score: 8.1, gap: 'nearest waffle pass 3 min after', event: 'Op. Epic Fury — US/Israel open joint strikes on Iran (01:15 ET). Khamenei killed. Critical point: Tehran.', type: 'correlation', conf: 'confirmed' },
-  { date: 'Jan 3, 2026', score: 0.1, gap: 'nearest waffle pass 66 min after', event: 'Op. Absolute Resolve — Delta Force captures Maduro in Caracas (02:01 VET). Critical point: Maduro compound.', type: 'miss', conf: 'confirmed' },
-  { date: 'Jun 13, 2025', score: 0.1, gap: 'nearest waffle pass 70 min after', event: 'Op. Rising Lion — Israel opens strikes on Iran. First IAF wave (~03:00 IRST) hits leadership and air defenses. Critical point: Tehran.', type: 'miss', conf: 'confirmed' },
+  {"date": "Jun 13, 2025", "op": "Op. Rising Lion \u2014 Israel opens strikes on Iran", "opScore": 0.0, "phases": [{"name": "Opening wave \u2014 leadership & SEAD (Tehran)", "score": 0.0, "detail": "no waffle pass over the target during this phase window", "conf": "confirmed"}, {"name": "Natanz enrichment strike", "score": 0.0, "detail": "no waffle pass over the target during this phase window", "conf": "confirmed"}]},
+  {"date": "Jan 3, 2026", "op": "Op. Absolute Resolve \u2014 US raid captures Maduro in Caracas", "opScore": 8.7, "phases": [{"name": "Ingress & assault on Maduro compound (Caracas)", "score": 0.0, "detail": "no waffle pass over the target during this phase window", "conf": "confirmed"}, {"name": "Exfiltration with Maduro", "score": 8.7, "detail": "best pass 03:57 VET at 61\u00b0 elev (BB4); 40 min covered, 5 passes in window", "conf": "confirmed"}]},
+  {"date": "Feb 28, 2026", "op": "Op. Epic Fury \u2014 US/Israel open joint strikes on Iran", "opScore": 8.5, "phases": [{"name": "Opening strikes / Khamenei decapitation (Tehran)", "score": 1.9, "detail": "best pass 01:18 ET at 11\u00b0 elev (BW3); 2 min covered, 1 passes in window", "conf": "confirmed"}, {"name": "Nuclear facility strikes (Fordow)", "score": 8.5, "detail": "best pass 02:53 ET at 58\u00b0 elev (BW3); 7 min covered, 1 passes in window", "conf": "confirmed"}]},
+  {"date": "Apr 3, 2026", "op": "Epic Fury sub-op \u2014 Dude 44 pilot CSAR recovery", "opScore": 1.9, "phases": [{"name": "Pilot extraction (Kohgiluyeh & Boyer-Ahmad)", "score": 1.9, "detail": "best pass 11:43 IRST at 11\u00b0 elev (BB6); 2 min covered, 1 passes in window", "conf": "approx"}]},
+  {"date": "Apr 5, 2026", "op": "Epic Fury sub-op \u2014 Dude 44 WSO CSAR recovery", "opScore": 0.0, "phases": [{"name": "WSO extraction (near Yasuj)", "score": 0.0, "detail": "no waffle pass over the target during this phase window", "conf": "approx"}]},
+  {"date": "May 25, 2026", "op": "Epic Fury ceasefire \u2014 US Hormuz self-defense strikes", "opScore": null, "phases": [{"name": "Self-defense strikes (Bandar Abbas / Hormuz)", "score": null, "detail": "best pass 21:27 IRST at 86\u00b0 elev (BB1/BB5/BB6); 133 min covered, 20 passes in window", "conf": "time-unconfirmed"}]},
 ];
 
 export default function IntelPage() {
@@ -33,65 +33,64 @@ export default function IntelPage() {
       <div className="flex-1 overflow-y-auto p-6 max-w-4xl mx-auto w-full">
         {/* Thesis */}
         <section className="panel p-6 mb-6">
-          <h2 className="panel-header text-[14px]">THE SYRUP THESIS (v3 — CRITICAL MOMENT)</h2>
+          <h2 className="panel-header text-[14px]">THE SYRUP THESIS (v4 — PHASE / BEST PASS)</h2>
           <div className="space-y-4 text-[12px] leading-relaxed text-[var(--color-text-dim)]">
             <p>
-              <span className="text-[var(--color-waffle)] font-bold">The right question is narrow.</span>{' '}
-              The Block-1 BlueBirds fly as a single-plane train, so any given point on the ground sits inside a
-              footprint only during a handful of short passes a day. That makes coincidence meaningful: for a specific
-              operation, did a waffle happen to be overhead the exact target at the critical instant — the strike
-              kickoff, the extraction — or, if not, how close in time was the nearest pass?
+              <span className="text-[var(--color-waffle)] font-bold">Operations have phases.</span>{' '}
+              A single kickoff timestamp is the wrong yardstick for something that unfolds over hours. A capture
+              raid has an ingress, an assault, and an exfiltration — and the exfil, with the high-value target
+              aboard, is often the most sensitive phase of all. So each operation is broken into its critical
+              phases, each with its own time window and point target.
             </p>
             <p>
-              <span className="text-[var(--color-ok)] font-bold">The score.</span>{' '}
-              Each event is scored <span className="text-[var(--color-waffle)] font-bold">10 · exp(−gap / 15)</span>,
-              where <em>gap</em> is the minutes between the critical moment and the nearest instant the target is inside
-              any footprint. Overhead at the moment scores 10; a pass 15 minutes away ~3.7; an hour away, essentially 0.
-              Every timestamp is researched to the reported kickoff/extraction time and propagated from real Space-Track orbits.
+              <span className="text-[var(--color-ok)] font-bold">Score = 10 · sin(elevation)</span>{' '}
+              of the single most directly-overhead ASTS pass during the phase window. A near-overhead pass gives the
+              array a short slant range and a near-nadir look (90° → 10); a low grazing pass barely sees the target
+              (11° → 1.9); no pass at all → 0. Every window and target is researched and propagated from real Space-Track orbits.
             </p>
             <p>
-              <span className="text-[var(--color-danger)] font-bold">The result is mixed — and that is the honest part.</span>{' '}
-              Of the three headline operations, only <span className="text-[var(--color-text)] font-bold">Op. Epic Fury</span> had a
-              waffle near its critical moment (a pass just ~3 minutes after kickoff over Tehran). Op. Rising Lion and the
-              Maduro raid were clean misses — the nearest pass was over an hour away. Among the Epic Fury sub-events, the
-              downed-pilot recovery lines up with a pass ~3 minutes out, while the WSO extraction had no pass within two hours.
+              <span className="text-[var(--color-danger)] font-bold">This corrects the earlier single-instant read.</span>{' '}
+              Op. Absolute Resolve looked like a miss when judged on its 02:01 kickoff — but its exfil phase caught a
+              61° near-overhead pass right as Maduro was flown out (8.7). Op. Epic Fury&apos;s real coverage was the
+              Fordow nuclear phase (58°), not the grazing Tehran opening. Op. Rising Lion stays a genuine miss — no
+              waffle crossed Tehran or Natanz during the opening wave.
             </p>
           </div>
         </section>
 
         {/* Statistical Evidence */}
         <section className="panel p-6 mb-6">
-          <h2 className="panel-header text-[14px]">CRITICAL-MOMENT COINCIDENCE</h2>
+          <h2 className="panel-header text-[14px]">PHASE COINCIDENCE</h2>
           <div className="grid grid-cols-4 gap-4 mb-4">
             <div className="text-center p-4 bg-[var(--color-card)] rounded">
-              <div className="text-[28px] font-bold text-[var(--color-ok)]">2 / 6</div>
-              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Critical moments with a near pass</div>
+              <div className="text-[28px] font-bold text-[var(--color-ok)]">2 / 5</div>
+              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Scored ops with a strong phase</div>
             </div>
             <div className="text-center p-4 bg-[var(--color-card)] rounded">
-              <div className="text-[28px] font-bold text-[var(--color-danger)]">0 / 6</div>
-              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Waffle overhead at the exact instant</div>
+              <div className="text-[28px] font-bold text-[var(--color-waffle)]">61°</div>
+              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Best pass — Maduro exfil</div>
             </div>
             <div className="text-center p-4 bg-[var(--color-card)] rounded">
-              <div className="text-[28px] font-bold text-[var(--color-waffle)]">3 min</div>
-              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Best near-pass (Epic Fury / Tehran)</div>
+              <div className="text-[28px] font-bold text-[var(--color-danger)]">8.7</div>
+              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Top phase score</div>
             </div>
             <div className="text-center p-4 bg-[var(--color-card)] rounded">
-              <div className="text-[28px] font-bold text-[var(--color-blue)]">8.2</div>
-              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Top critical score</div>
+              <div className="text-[28px] font-bold text-[var(--color-blue)]">1</div>
+              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Unscored (no reported time)</div>
             </div>
           </div>
           <div className="text-[11px] text-[var(--color-text-dim)] leading-relaxed space-y-2">
             <p>
-              At none of the six critical instants was a waffle exactly overhead — expected, given how briefly the train
-              dwells over any single point. What varies is the gap to the nearest pass: ~3 minutes for Epic Fury and the
-              pilot recovery, versus 66–70 minutes for Rising Lion and the Maduro raid, and no pass at all within two hours
-              for the WSO extraction. Two of six qualify as genuine near-coincidences.
+              Two of the five time-anchored operations had a well-placed pass during a critical phase: the Maduro
+              exfil (61°, BB4) and the Epic Fury Fordow strike (58°, BW3). Two were clean misses (Rising Lion; the WSO
+              extraction near Yasuj), and two had only grazing sub-11° passes (the Epic Fury Tehran opening; the pilot
+              recovery). The May 25 Hormuz strikes have no reported time of day, so they are left unscored — over a full
+              day a near-overhead pass is guaranteed, and pretending otherwise would fabricate a result.
             </p>
             <p>
-              Caveats matter here. The strike kickoffs (Rising Lion, Epic Fury, Absolute Resolve) are timed to reported
-              minutes; the two rescues are approximate to the hour, and the May 25 Hormuz strike has no reported time of day
-              (scored at a nominal noon and flagged). A few-minute shift in an assumed time can swing a point-target score,
-              so treat the rescue and Hormuz numbers as indicative. This remains an orbital-mechanics curiosity, not intelligence.
+              Elevation is doing real work here: several &quot;near passes&quot; from the single-instant model turn out to be
+              low grazing looks worth little. A phase only earns a high score when a waffle is genuinely overhead while
+              it matters. This is an orbital-mechanics curiosity, not intelligence — rescue-phase times are approximate.
             </p>
           </div>
         </section>
@@ -99,45 +98,43 @@ export default function IntelPage() {
         {/* Operations Timeline */}
         <section className="panel p-6 mb-6">
           <h2 className="panel-header text-[14px]">OPERATIONS TIMELINE</h2>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {TIMELINE.map((item, i) => (
-              <div key={i} className="flex gap-3 text-[11px]">
-                <div className="flex flex-col items-center">
-                  <div
-                    className="w-3 h-3 rounded-full flex-shrink-0"
+              <div key={i} className="border-l-2 pl-3" style={{ borderColor: item.opScore === null ? '#888' : item.opScore >= 8 ? '#FF0040' : item.opScore >= 5 ? '#FF6B00' : item.opScore >= 2 ? '#F5A623' : '#00FF88' }}>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[var(--color-text)] text-[12px] font-bold">{item.date}</span>
+                  <span
+                    className="text-[10px] font-bold px-1.5 py-0.5 rounded"
                     style={{
-                      backgroundColor:
-                        item.type === 'correlation' ? '#FF0040' :
-                        item.type === 'alignment' ? '#F5A623' : '#4488FF',
+                      color: item.opScore === null ? '#AAA' : item.opScore >= 8 ? '#FF0040' : item.opScore >= 5 ? '#FF6B00' : item.opScore >= 2 ? '#F5A623' : '#00FF88',
+                      backgroundColor: item.opScore === null ? '#88888820' : item.opScore >= 8 ? '#FF004015' : item.opScore >= 5 ? '#FF6B0015' : item.opScore >= 2 ? '#F5A62315' : '#00FF8815',
                     }}
-                  />
-                  {i < TIMELINE.length - 1 && <div className="w-px flex-1 bg-[var(--color-border)]" />}
+                  >
+                    {item.opScore === null ? 'SYRUP N/A' : `SYRUP ${item.opScore.toFixed(1)}`}
+                  </span>
                 </div>
-                <div className="pb-3">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-[var(--color-text)]">{item.date}</span>
-                    <span
-                      className="text-[10px] font-bold px-1.5 py-0.5 rounded"
-                      style={{
-                        color: item.score >= 8 ? '#FF0040' : item.score >= 5 ? '#FF6B00' : item.score >= 2 ? '#F5A623' : '#00FF88',
-                        backgroundColor: item.score >= 8 ? '#FF004015' : item.score >= 5 ? '#FF6B0015' : item.score >= 2 ? '#F5A62315' : '#00FF8815',
-                      }}
-                    >
-                      SYRUP {item.score.toFixed(1)}
-                    </span>
-                    <span
-                      className="text-[9px] font-bold px-1.5 py-0.5 rounded border"
-                      style={{
-                        color: item.type === 'correlation' ? '#00FF88' : '#FF6B6B',
-                        borderColor: item.type === 'correlation' ? '#00FF8840' : '#FF6B6B40',
-                      }}
-                    >
-                      {item.type === 'correlation' ? 'NEAR PASS' : 'MISS'}
-                    </span>
-                    <span className="text-[9px] text-[var(--color-text-muted)] uppercase">{item.conf}</span>
-                  </div>
-                  <div className="text-[var(--color-text-dim)] mt-0.5">{item.event}</div>
-                  <div className="text-[10px] text-[var(--color-text-muted)] mt-0.5 italic">{item.gap}</div>
+                <div className="text-[11px] text-[var(--color-text-dim)] mt-0.5">{item.op}</div>
+                <div className="mt-2 space-y-1.5">
+                  {item.phases.map((p, j) => (
+                    <div key={j} className="flex gap-2 text-[10px]">
+                      <span
+                        className="font-bold px-1 py-0.5 rounded flex-shrink-0 h-fit"
+                        style={{
+                          color: p.score === null ? '#AAA' : p.score >= 8 ? '#FF0040' : p.score >= 5 ? '#FF6B00' : p.score >= 2 ? '#F5A623' : '#00FF88',
+                          backgroundColor: p.score === null ? '#88888820' : p.score >= 8 ? '#FF004015' : p.score >= 5 ? '#FF6B0015' : p.score >= 2 ? '#F5A62315' : '#00FF8815',
+                        }}
+                      >
+                        {p.score === null ? 'N/A' : p.score.toFixed(1)}
+                      </span>
+                      <div>
+                        <span className="text-[var(--color-text)]">{p.name}</span>
+                        {p.conf !== 'confirmed' && (
+                          <span className="text-[8px] text-[var(--color-text-muted)] uppercase ml-1">[{p.conf}]</span>
+                        )}
+                        <div className="text-[var(--color-text-muted)]">{p.detail}</div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
