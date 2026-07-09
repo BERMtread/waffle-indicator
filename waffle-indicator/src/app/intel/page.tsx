@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Ticker } from '@/components/dashboard/Ticker';
 
 const TIMELINE = [
-  {"date": "Jun 13, 2025", "op": "Op. Rising Lion \u2014 Israel opens strikes on Iran", "opScore": 0.0, "phases": [{"name": "Opening wave \u2014 leadership & SEAD (Tehran)", "score": 0.0, "detail": "no waffle pass over the target during this phase window", "conf": "confirmed"}, {"name": "Natanz enrichment strike", "score": 0.0, "detail": "no waffle pass over the target during this phase window", "conf": "confirmed"}]},
+  {"date": "Jun 22, 2025", "op": "Op. Midnight Hammer \u2014 US B-2/Tomahawk strike on Fordow, Natanz & Isfahan", "opScore": 8.3, "phases": [{"name": "Fordow strike (B-2 / GBU-57 MOP)", "score": 6.7, "detail": "best pass 02:22 IRST at 42\u00b0 elev (BB2); 7 min covered, 1 passes in window", "conf": "confirmed"}, {"name": "Natanz strike (MOP + Tomahawk)", "score": 6.0, "detail": "best pass 02:22 IRST at 37\u00b0 elev (BB2); 7 min covered, 1 passes in window", "conf": "confirmed"}, {"name": "Isfahan strike (Tomahawk, final wave)", "score": 8.3, "detail": "best pass 02:47 IRST at 56\u00b0 elev (BB1/BB5); 12 min covered, 2 passes in window", "conf": "confirmed"}]},
   {"date": "Jan 3, 2026", "op": "Op. Absolute Resolve \u2014 US raid captures Maduro in Caracas", "opScore": 8.7, "phases": [{"name": "Ingress & assault on Maduro compound (Caracas)", "score": 0.0, "detail": "no waffle pass over the target during this phase window", "conf": "confirmed"}, {"name": "Exfiltration with Maduro", "score": 8.7, "detail": "best pass 03:57 VET at 61\u00b0 elev (BB4); 40 min covered, 5 passes in window", "conf": "confirmed"}]},
   {"date": "Feb 28, 2026", "op": "Op. Epic Fury \u2014 US/Israel open joint strikes on Iran", "opScore": 8.5, "phases": [{"name": "Opening strikes / Khamenei decapitation (Tehran)", "score": 1.9, "detail": "best pass 01:18 ET at 11\u00b0 elev (BW3); 2 min covered, 1 passes in window", "conf": "confirmed"}, {"name": "Nuclear facility strikes (Fordow)", "score": 8.5, "detail": "best pass 02:53 ET at 58\u00b0 elev (BW3); 7 min covered, 1 passes in window", "conf": "confirmed"}]},
   {"date": "Apr 3, 2026", "op": "Epic Fury sub-op \u2014 Dude 44 pilot CSAR recovery", "opScore": 1.9, "phases": [{"name": "Pilot extraction (Kohgiluyeh & Boyer-Ahmad)", "score": 1.9, "detail": "best pass 11:43 IRST at 11\u00b0 elev (BB6); 2 min covered, 1 passes in window", "conf": "approx"}]},
@@ -52,8 +52,8 @@ export default function IntelPage() {
               <span className="text-[var(--color-danger)] font-bold">This corrects the earlier single-instant read.</span>{' '}
               Op. Absolute Resolve looked like a miss when judged on its 02:01 kickoff — but its exfil phase caught a
               61° near-overhead pass right as Maduro was flown out (8.7). Op. Epic Fury&apos;s real coverage was the
-              Fordow nuclear phase (58°), not the grazing Tehran opening. Op. Rising Lion stays a genuine miss — no
-              waffle crossed Tehran or Natanz during the opening wave.
+              Fordow nuclear phase (58°), not the grazing Tehran opening. Op. Midnight Hammer, meanwhile, is a real hit — a
+              56° near-overhead pass sat over Isfahan during the final Tomahawk wave (8.3).
             </p>
           </div>
         </section>
@@ -63,7 +63,7 @@ export default function IntelPage() {
           <h2 className="panel-header text-[14px]">PHASE COINCIDENCE</h2>
           <div className="grid grid-cols-4 gap-4 mb-4">
             <div className="text-center p-4 bg-[var(--color-card)] rounded">
-              <div className="text-[28px] font-bold text-[var(--color-ok)]">2 / 5</div>
+              <div className="text-[28px] font-bold text-[var(--color-ok)]">3 / 5</div>
               <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Scored ops with a strong phase</div>
             </div>
             <div className="text-center p-4 bg-[var(--color-card)] rounded">
@@ -81,10 +81,10 @@ export default function IntelPage() {
           </div>
           <div className="text-[11px] text-[var(--color-text-dim)] leading-relaxed space-y-2">
             <p>
-              Two of the five time-anchored operations had a well-placed pass during a critical phase: the Maduro
-              exfil (61°, BB4) and the Epic Fury Fordow strike (58°, BW3). Two were clean misses (Rising Lion; the WSO
-              extraction near Yasuj), and two had only grazing sub-11° passes (the Epic Fury Tehran opening; the pilot
-              recovery). The May 25 Hormuz strikes have no reported time of day, so they are left unscored — over a full
+              Three of the five time-anchored operations had a well-placed pass during a critical phase: the Maduro
+              exfil (61°, BB4), the Epic Fury Fordow strike (58°, BW3), and Op. Midnight Hammer over Isfahan (56°,
+              BB1/BB5). One was a clean miss (the WSO extraction near Yasuj), and the rest had only grazing sub-11°
+              passes (the Epic Fury Tehran opening; the pilot recovery). The May 25 Hormuz strikes have no reported time of day, so they are left unscored — over a full
               day a near-overhead pass is guaranteed, and pretending otherwise would fabricate a result.
             </p>
             <p>
