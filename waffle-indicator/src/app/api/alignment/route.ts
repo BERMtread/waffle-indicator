@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { initSatellites, getAllPositions } from '@/lib/orbital/propagator';
 import { computeWaffleLevel } from '@/lib/orbital/alignment-scorer';
 import { scoreCoverageWindow } from '@/lib/orbital/coverage-window';
+import { scoreCriticalMoment } from '@/lib/orbital/critical-moment';
 import { ALL_AOIS } from '@/lib/geo/aoi-data';
 
 export const dynamic = 'force-dynamic';
@@ -20,6 +21,27 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: `AOI '${aoiId}' not found` }, { status: 404 });
     }
     const coverage = computeWaffleLevel(positions, aoi);
+
+    // Critical-moment methodology (v3): ?mode=critical&lat=&lng=&at=<ISO>
+    // Was a waffle overhead a specific point at a specific instant — if not, how
+    // close was the nearest pass? Defaults to the AOI centroid and now.
+    if (searchParams.get('mode') === 'critical') {
+      const lat = Number(searchParams.get('lat'));
+      const lng = Number(searchParams.get('lng'));
+      const target = Number.isFinite(lat) && Number.isFinite(lng)
+        ? { lat, lng }
+        : { lat: aoi.centroid.lat, lng: aoi.centroid.lng };
+      const atParam = searchParams.get('at');
+      const at = atParam ? new Date(atParam) : now;
+      const windowMin = Math.min(1440, Math.max(30, Number(searchParams.get('windowMin')) || 240));
+      const critical = scoreCriticalMoment(satellites, target, at, windowMin);
+      return NextResponse.json({
+        aoiId: aoi.id,
+        methodology: 'critical-moment-v3',
+        critical,
+        timestamp: now.toISOString(),
+      });
+    }
 
     // Coverage-duration methodology (v2): ?mode=window&windowMin=1440
     // Scores how OFTEN and how LONG the AOI is actually covered over a window,

@@ -4,23 +4,12 @@ import Link from 'next/link';
 import { Ticker } from '@/components/dashboard/Ticker';
 
 const TIMELINE = [
-  { date: 'Feb 28, 2026', level: 8.4, event: 'Op. Epic Fury / Op. Roaring Lion. US + Israel joint strikes on Tehran, Isfahan, Qom, Karaj. Full constellation + BB6 aligned over Iran. Supreme Leader killed. Highest waffle ever recorded.', type: 'correlation' },
-  { date: 'Feb 2-3, 2026', level: 5.9, event: 'Russia launches 450 drones + 71 missiles at Ukraine energy grid. Massive barrage across Kyiv, Kharkiv, Odesa. BB3/BB1/BB6 over Eastern Ukraine.', type: 'correlation' },
-  { date: 'Jan 27, 2026', level: 3.8, event: 'DPRK fires ballistic missiles into sea ahead of political congress. BB2/BB3 alignment over Korean Peninsula.', type: 'alignment' },
-  { date: 'Jan 4, 2026', level: 6.3, event: 'DPRK multiple ballistic missile salvo (900 km range). Kim orders 250% production increase. BB2/BB3 in footprint.', type: 'alignment' },
-  { date: 'Jan 3, 2026', level: 4.2, event: 'Op. Absolute Resolve. Delta Force captures Maduro in Caracas. US bombs Venezuelan air defenses. BW3/BB4/BB5 aligned.', type: 'correlation' },
-  { date: 'Dec 29-30, 2025', level: 4.9, event: 'PLA "Justice Mission 2025" — 130 aircraft sorties, 27 rockets from Fujian, 10 land in Taiwan contiguous zone. BB1/BB2/BB3/BB4 full coverage of Taiwan Strait.', type: 'correlation' },
-  { date: 'Dec 24, 2025', level: null, event: 'BB6 (Block 2) launched. 223 m² array — 3.5x larger than Block 1. Constellation at full strength.', type: 'launch' },
-  { date: 'Dec 8, 2025', level: 6.0, event: 'RSF seizes Heglig oilfield (Sudan\'s largest). BB5/BB6 alignment over Kordofan region.', type: 'alignment' },
-  { date: 'Oct 26, 2025', level: 4.8, event: 'RSF overruns El Fasher after 500-day siege. Mass atrocity event. BW3/BB5/BB6 aligned over North Darfur.', type: 'correlation' },
-  { date: 'Aug 28, 2025', level: 5.1, event: 'Israeli airstrike kills Houthi PM in Sanaa. BB1/BB4 alignment over Yemen.', type: 'correlation' },
-  { date: 'Aug 20, 2025', level: 4.2, event: 'China deploys armed boats to Second Thomas Shoal, 50m from BRP Sierra Madre. BB1/BB2 in SCS footprint.', type: 'alignment' },
-  { date: 'Aug 11, 2025', level: 5.1, event: 'China Coast Guard vessel collides with PLA Navy ship at Scarborough Shoal. BB1/BB2 aligned.', type: 'alignment' },
-  { date: 'Jun 21-22, 2025', level: 8.5, event: 'US joins Twelve-Day War — strikes Fordow, Natanz, Isfahan. BW3/BB1/BB4/BB5 over Iran. Second major Iran correlation.', type: 'correlation' },
-  { date: 'Jun 13, 2025', level: 7.1, event: 'Op. Rising Lion begins. Israel strikes Natanz, Isfahan, Fordow, Arak. Assassinates nuclear scientists. BW3/BB1/BB4/BB5 aligned.', type: 'correlation' },
-  { date: 'May 7, 2025', level: 5.3, event: 'Op. Sindoor. India strikes JeM/LeT targets in Pakistan + Azad Kashmir. BW3/BB2/BB4 aligned over India-Pakistan border.', type: 'correlation' },
-  { date: 'May 4, 2025', level: 5.8, event: 'Houthi hypersonic missile evades THAAD/Arrow, strikes Ben Gurion Airport perimeter. BB1/BB5 over Red Sea/Yemen.', type: 'alignment' },
-  { date: 'Sep 12, 2024', level: null, event: 'Block 1 BlueBirds launched (BB1-BB5). Constellation enters operational phase.', type: 'launch' },
+  { date: 'May 25, 2026', score: 1.1, gap: 'nearest waffle pass 33 min before', event: 'Epic Fury ceasefire — US "self-defense" strikes on IRGC mine-laying boats + Bandar Abbas SAM site. Time of day not reported.', type: 'miss', conf: 'time unconfirmed' },
+  { date: 'Apr 5, 2026', score: 0.0, gap: 'no pass within \u00b1120 min', event: 'Epic Fury CSAR — F-15E "Dude 44" WSO extracted (~03:00 IRST) near Yasuj after ~46h evading. Critical point: crash site.', type: 'miss', conf: 'time approximate' },
+  { date: 'Apr 3, 2026', score: 8.2, gap: 'nearest waffle pass 3 min after', event: 'Epic Fury CSAR — "Dude 44" pilot recovered ~7h after the F-15E was downed in Kohgiluyeh & Boyer-Ahmad. Critical point: recovery site.', type: 'correlation', conf: 'time approximate' },
+  { date: 'Feb 28, 2026', score: 8.1, gap: 'nearest waffle pass 3 min after', event: 'Op. Epic Fury — US/Israel open joint strikes on Iran (01:15 ET). Khamenei killed. Critical point: Tehran.', type: 'correlation', conf: 'confirmed' },
+  { date: 'Jan 3, 2026', score: 0.1, gap: 'nearest waffle pass 66 min after', event: 'Op. Absolute Resolve — Delta Force captures Maduro in Caracas (02:01 VET). Critical point: Maduro compound.', type: 'miss', conf: 'confirmed' },
+  { date: 'Jun 13, 2025', score: 0.1, gap: 'nearest waffle pass 70 min after', event: 'Op. Rising Lion — Israel opens strikes on Iran. First IAF wave (~03:00 IRST) hits leadership and air defenses. Critical point: Tehran.', type: 'miss', conf: 'confirmed' },
 ];
 
 export default function IntelPage() {
@@ -44,68 +33,65 @@ export default function IntelPage() {
       <div className="flex-1 overflow-y-auto p-6 max-w-4xl mx-auto w-full">
         {/* Thesis */}
         <section className="panel p-6 mb-6">
-          <h2 className="panel-header text-[14px]">THE SYRUP THESIS (v2 — COVERAGE MODEL)</h2>
+          <h2 className="panel-header text-[14px]">THE SYRUP THESIS (v3 — CRITICAL MOMENT)</h2>
           <div className="space-y-4 text-[12px] leading-relaxed text-[var(--color-text-dim)]">
             <p>
-              <span className="text-[var(--color-waffle)] font-bold">The original pitch:</span>{' '}
-              when several ASTS &quot;waffles&quot; stack over a hotspot at the same instant, something is about to happen.
-              Rebuilt on real Space-Track historical TLEs, that framing does not hold up — and it&apos;s worth being honest about why.
+              <span className="text-[var(--color-waffle)] font-bold">The right question is narrow.</span>{' '}
+              The Block-1 BlueBirds fly as a single-plane train, so any given point on the ground sits inside a
+              footprint only during a handful of short passes a day. That makes coincidence meaningful: for a specific
+              operation, did a waffle happen to be overhead the exact target at the critical instant — the strike
+              kickoff, the extraction — or, if not, how close in time was the nearest pass?
             </p>
             <p>
-              <span className="text-[var(--color-danger)] font-bold">The Block-1 BlueBirds are a train, not a formation.</span>{' '}
-              BB1–BB5 launched together on 2024-09-12 into a single ~53° plane, so they trail each other like a string of pearls.
-              Which satellite is overhead at any given second is pure orbital phase, not intent. At the exact reported strike
-              minute of these nine events, the median number of waffles actually overhead was <span className="text-[var(--color-text)] font-bold">zero</span>.
+              <span className="text-[var(--color-ok)] font-bold">The score.</span>{' '}
+              Each event is scored <span className="text-[var(--color-waffle)] font-bold">10 · exp(−gap / 15)</span>,
+              where <em>gap</em> is the minutes between the critical moment and the nearest instant the target is inside
+              any footprint. Overhead at the moment scores 10; a pass 15 minutes away ~3.7; an hour away, essentially 0.
+              Every timestamp is researched to the reported kickoff/extraction time and propagated from real Space-Track orbits.
             </p>
             <p>
-              <span className="text-[var(--color-ok)] font-bold">So we measure coverage over time instead.</span>{' '}
-              The v2 <span className="text-[var(--color-waffle)] font-bold">coverage score</span> integrates how LONG (dwell) and how
-              OFTEN (revisit cadence) the target is covered across a ±12h window, from SGP4-propagated real orbits.
-              These scores are reproducible — but they are a description of orbital geometry, not a warning light.
-            </p>
-            <p>
-              <span className="text-[var(--color-danger)] font-bold">The uncomfortable finding:</span>{' '}
-              coverage during every operation window is statistically identical to coverage on the ordinary days
-              around it (typicality ratio ≈ 1.0). These regions sit under the constellation ~13–26% of <em>every</em> day.
-              A &quot;correlation&quot; that is equally strong on a random Tuesday carries no predictive information.
+              <span className="text-[var(--color-danger)] font-bold">The result is mixed — and that is the honest part.</span>{' '}
+              Of the three headline operations, only <span className="text-[var(--color-text)] font-bold">Op. Epic Fury</span> had a
+              waffle near its critical moment (a pass just ~3 minutes after kickoff over Tehran). Op. Rising Lion and the
+              Maduro raid were clean misses — the nearest pass was over an hour away. Among the Epic Fury sub-events, the
+              downed-pilot recovery lines up with a pass ~3 minutes out, while the WSO extraction had no pass within two hours.
             </p>
           </div>
         </section>
 
         {/* Statistical Evidence */}
         <section className="panel p-6 mb-6">
-          <h2 className="panel-header text-[14px]">WHAT THE REAL ORBITS SHOW</h2>
+          <h2 className="panel-header text-[14px]">CRITICAL-MOMENT COINCIDENCE</h2>
           <div className="grid grid-cols-4 gap-4 mb-4">
             <div className="text-center p-4 bg-[var(--color-card)] rounded">
-              <div className="text-[28px] font-bold text-[var(--color-danger)]">≈1.0</div>
-              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Typicality Ratio (event vs normal day)</div>
+              <div className="text-[28px] font-bold text-[var(--color-ok)]">2 / 6</div>
+              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Critical moments with a near pass</div>
             </div>
             <div className="text-center p-4 bg-[var(--color-card)] rounded">
-              <div className="text-[28px] font-bold text-[var(--color-waffle)]">0</div>
-              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Median Waffles At Strike Minute</div>
+              <div className="text-[28px] font-bold text-[var(--color-danger)]">0 / 6</div>
+              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Waffle overhead at the exact instant</div>
             </div>
             <div className="text-center p-4 bg-[var(--color-card)] rounded">
-              <div className="text-[28px] font-bold text-[var(--color-ok)]">13–26%</div>
-              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">AOI Covered — Every Day</div>
+              <div className="text-[28px] font-bold text-[var(--color-waffle)]">3 min</div>
+              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Best near-pass (Epic Fury / Tehran)</div>
             </div>
             <div className="text-center p-4 bg-[var(--color-card)] rounded">
-              <div className="text-[28px] font-bold text-[var(--color-blue)]">8.4</div>
-              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Top Coverage Score (Iran)</div>
+              <div className="text-[28px] font-bold text-[var(--color-blue)]">8.2</div>
+              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Top critical score</div>
             </div>
           </div>
           <div className="text-[11px] text-[var(--color-text-dim)] leading-relaxed space-y-2">
             <p>
-              Recomputed from real historical TLEs (SGP4, ±12h window, 30s steps), coverage scores range from
-              4.2 (Venezuela) to 8.4 (Iran / Op. Epic Fury). The ranking is driven almost entirely by AOI
-              latitude and size: higher-latitude, larger targets (Iran, Ukraine, North Korea) dwell longest under a
-              53°-inclination constellation that lingers near its turn-around latitudes. Venezuela and the Taiwan
-              Strait sit lower and smaller, so they score lowest — for reasons of geometry, not geopolitics.
+              At none of the six critical instants was a waffle exactly overhead — expected, given how briefly the train
+              dwells over any single point. What varies is the gap to the nearest pass: ~3 minutes for Epic Fury and the
+              pilot recovery, versus 66–70 minutes for Rising Lion and the Maduro raid, and no pass at all within two hours
+              for the WSO extraction. Two of six qualify as genuine near-coincidences.
             </p>
             <p>
-              Crucially, every event&apos;s window dwell lands within ±10% of the mean dwell on the adjacent control
-              days. The constellation covers each of these regions dozens of times a day, every day. The v2 score is
-              retained as an honest coverage-intensity readout; it should not be read as a leading indicator of
-              military action. This is a fun orbital-mechanics tracker, not intelligence.
+              Caveats matter here. The strike kickoffs (Rising Lion, Epic Fury, Absolute Resolve) are timed to reported
+              minutes; the two rescues are approximate to the hour, and the May 25 Hormuz strike has no reported time of day
+              (scored at a nominal noon and flagged). A few-minute shift in an assumed time can swing a point-target score,
+              so treat the rescue and Hormuz numbers as indicative. This remains an orbital-mechanics curiosity, not intelligence.
             </p>
           </div>
         </section>
@@ -128,21 +114,30 @@ export default function IntelPage() {
                   {i < TIMELINE.length - 1 && <div className="w-px flex-1 bg-[var(--color-border)]" />}
                 </div>
                 <div className="pb-3">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-[var(--color-text)]">{item.date}</span>
-                    {item.level !== null && (
-                      <span
-                        className="text-[10px] font-bold px-1.5 py-0.5 rounded"
-                        style={{
-                          color: item.level >= 8 ? '#FF0040' : item.level >= 6 ? '#FF6B00' : item.level >= 4 ? '#F5A623' : '#00FF88',
-                          backgroundColor: item.level >= 8 ? '#FF004015' : item.level >= 6 ? '#FF6B0015' : item.level >= 4 ? '#F5A62315' : '#00FF8815',
-                        }}
-                      >
-                        SYRUP {item.level.toFixed(1)}
-                      </span>
-                    )}
+                    <span
+                      className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                      style={{
+                        color: item.score >= 8 ? '#FF0040' : item.score >= 5 ? '#FF6B00' : item.score >= 2 ? '#F5A623' : '#00FF88',
+                        backgroundColor: item.score >= 8 ? '#FF004015' : item.score >= 5 ? '#FF6B0015' : item.score >= 2 ? '#F5A62315' : '#00FF8815',
+                      }}
+                    >
+                      SYRUP {item.score.toFixed(1)}
+                    </span>
+                    <span
+                      className="text-[9px] font-bold px-1.5 py-0.5 rounded border"
+                      style={{
+                        color: item.type === 'correlation' ? '#00FF88' : '#FF6B6B',
+                        borderColor: item.type === 'correlation' ? '#00FF8840' : '#FF6B6B40',
+                      }}
+                    >
+                      {item.type === 'correlation' ? 'NEAR PASS' : 'MISS'}
+                    </span>
+                    <span className="text-[9px] text-[var(--color-text-muted)] uppercase">{item.conf}</span>
                   </div>
                   <div className="text-[var(--color-text-dim)] mt-0.5">{item.event}</div>
+                  <div className="text-[10px] text-[var(--color-text-muted)] mt-0.5 italic">{item.gap}</div>
                 </div>
               </div>
             ))}

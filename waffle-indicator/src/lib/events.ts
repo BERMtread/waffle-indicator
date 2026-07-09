@@ -1,234 +1,212 @@
-export interface CoverageMetrics {
-  dwellMin: number;          // minutes ≥1 sat covered the AOI over a ±12h window
-  coveragePct: number;       // dwellMin as % of the 24h window
-  passes: number;            // distinct coverage intervals (revisits) in the window
-  maxConcurrent: number;     // peak simultaneous satellites overhead
-  satsAtEventMinute: number; // sats actually overhead at the reported strike minute
-  medianGapMin: number | null; // median revisit gap between passes
-  meanDailyDwellMin: number; // mean daily dwell on adjacent (control) days
-  typicalityRatio: number;   // event-window dwell / mean daily dwell (≈1 ⇒ ordinary day)
+export interface CriticalMoment {
+  targetName: string;
+  targetLat: number;
+  targetLng: number;
+  coveredAtMoment: boolean;      // was ≥1 waffle overhead the target at the exact critical instant
+  satsAtMoment: string[];        // codenames overhead at t0
+  bestElevAtMomentDeg: number;   // best look angle at t0 (0 if none overhead)
+  nearestPassGapMin: number;     // minutes to the nearest instant the target is inside a footprint
+  nearestPassSignedMin: number | null; // negative = pass before t0, positive = after (null = none within window)
+  nearestPassSats: string[];     // codename(s) of the nearest pass
+  nearestPassElevDeg: number;    // best look angle of the nearest pass
+  passesInWindow: number;        // distinct passes over the target within the search window
+  windowMin: number;             // search window width (minutes)
+  timeConfidence: 'confirmed' | 'approx' | 'unconfirmed-time';
+  note: string;                  // sourcing note on the critical timestamp
 }
 
 export interface CorrelationEvent {
   id: string;
-  date: string; // ISO 8601 UTC
-  level: number;
+  date: string; // ISO 8601 UTC — the critical moment (op kickoff / extraction)
+  level: number; // criticalScore 0–10 = 10·exp(-gap/15)
   label: string;
   shortLabel: string;
   sats: string[];
   aoiId: string;
   color: string;
   type: 'CORRELATED' | 'ALIGNMENT';
-  coverage?: CoverageMetrics;
+  parentOp?: string;
+  critical?: CriticalMoment;
 }
 
 /**
- * v2 — Coverage-duration methodology.
+ * v3 — Critical-moment methodology. Scope narrowed to three real operations plus
+ * the Epic Fury sub-events, each scored on a single question: at the exact critical
+ * instant, was an ASTS waffle overhead the specific target — and if not, how close
+ * in time was the nearest pass? level = 10·exp(-gap/15). See critical-moment.ts.
  *
- * `level` is now a real, reproducible COVERAGE SCORE (0–10) computed from actual
- * Space-Track historical TLEs (SGP4-propagated across a ±12h window around each
- * event), combining dwell time (how long the AOI is covered) and revisit cadence
- * (how often) — NOT the old instantaneous "how many waffles are stacked" reading.
- *
- * Important caveat surfaced by this recompute: `typicalityRatio` ≈ 1.0 for every
- * event, i.e. coverage during each operation window is statistically identical to
- * coverage on ordinary adjacent days. The Block-1 BlueBirds fly as a single-plane
- * train, so these AOIs are covered ~13–26% of *every* day regardless of events.
- * Treat `level` as a descriptive coverage-intensity metric, not a predictive signal.
+ * All timestamps are researched to the reported kickoff/extraction time (UTC).
+ * Rescue times are approximate (±); the Hormuz self-defense strike has no reported
+ * time of day (timeConfidence flags this per event).
  */
 
 export const CORRELATION_EVENTS: CorrelationEvent[] = [
   {
-    id: 'sindoor',
-    date: '2025-05-06T19:35:00Z',
-    level: 5.3,
-    label: 'Op. Sindoor — India Strikes Pakistan',
-    shortLabel: 'Sindoor',
-    sats: ["BB2", "BB5", "BB1"],
-    aoiId: 'pakistan-nuclear',
-    color: '#F5A623',
-    type: 'CORRELATED',
-    coverage: {
-      dwellMin: 219.5,
-      coveragePct: 15.2,
-      passes: 29,
-      maxConcurrent: 2,
-      satsAtEventMinute: 0,
-      medianGapMin: 16.5,
-      meanDailyDwellMin: 204.7,
-      typicalityRatio: 1.07,
-    },
-  },
-  {
     id: 'rising-lion',
-    date: '2025-06-12T20:30:00Z',
-    level: 7.1,
-    label: 'Op. Rising Lion — Israel Strikes Iran',
+    date: '2025-06-12T23:30:00Z',
+    level: 0.1,
+    label: 'Op. Rising Lion — Israel opens strikes on Iran',
     shortLabel: 'Rising Lion',
-    sats: ["BB3", "BB2", "BB4"],
+    sats: ["BB5", "BB1"],
     aoiId: 'iran',
-    color: '#FF6B00',
-    type: 'CORRELATED',
-    coverage: {
-      dwellMin: 308.0,
-      coveragePct: 21.4,
-      passes: 36,
-      maxConcurrent: 2,
-      satsAtEventMinute: 1,
-      medianGapMin: 15.5,
-      meanDailyDwellMin: 303.8,
-      typicalityRatio: 1.01,
-    },
-  },
-  {
-    id: 'scarborough',
-    date: '2025-08-11T04:00:00Z',
-    level: 5.1,
-    label: 'Scarborough Shoal Collision — SCS',
-    shortLabel: 'Scarborough',
-    sats: ["BB4", "BB3", "BW3"],
-    aoiId: 'south-china-sea',
-    color: '#F5A623',
+    color: '#00FF88',
     type: 'ALIGNMENT',
-    coverage: {
-      dwellMin: 233.5,
-      coveragePct: 16.2,
-      passes: 25,
-      maxConcurrent: 2,
-      satsAtEventMinute: 0,
-      medianGapMin: 15.5,
-      meanDailyDwellMin: 224.5,
-      typicalityRatio: 1.04,
+    critical: {
+      targetName: "Tehran (leadership/air-defense, first wave)",
+      targetLat: 35.69,
+      targetLng: 51.39,
+      coveredAtMoment: false,
+      satsAtMoment: [],
+      bestElevAtMomentDeg: 0.0,
+      nearestPassGapMin: 69.8,
+      nearestPassSignedMin: 69.8,
+      nearestPassSats: ["BB5", "BB1"],
+      nearestPassElevDeg: 10.3,
+      passesInWindow: 4,
+      windowMin: 240,
+      timeConfidence: 'confirmed',
+      note: "First IAF wave ~03:00 IRST 13 Jun 2025",
     },
   },
   {
-    id: 'el-fasher',
-    date: '2025-10-26T03:00:00Z',
-    level: 4.8,
-    label: 'RSF Captures El Fasher — Sudan',
-    shortLabel: 'El Fasher',
-    sats: ["BB4", "BB3", "BB2"],
-    aoiId: 'sudan',
-    color: '#F5A623',
-    type: 'CORRELATED',
-    coverage: {
-      dwellMin: 214.5,
-      coveragePct: 14.9,
-      passes: 24,
-      maxConcurrent: 2,
-      satsAtEventMinute: 1,
-      medianGapMin: 14.0,
-      meanDailyDwellMin: 224.3,
-      typicalityRatio: 0.96,
-    },
-  },
-  {
-    id: 'taiwan-blockade',
-    date: '2025-12-28T23:30:00Z',
-    level: 4.9,
-    label: 'PLA Justice Mission 2025 — Taiwan Blockade',
-    shortLabel: 'Taiwan',
-    sats: ["BB2", "BB1", "BB6"],
-    aoiId: 'taiwan-strait',
-    color: '#F5A623',
-    type: 'CORRELATED',
-    coverage: {
-      dwellMin: 198.0,
-      coveragePct: 13.8,
-      passes: 27,
-      maxConcurrent: 2,
-      satsAtEventMinute: 0,
-      medianGapMin: 16.5,
-      meanDailyDwellMin: 181.7,
-      typicalityRatio: 1.09,
-    },
-  },
-  {
-    id: 'venezuela',
+    id: 'absolute-resolve',
     date: '2026-01-03T06:01:00Z',
-    level: 4.2,
-    label: 'Op. Absolute Resolve — US Captures Maduro',
-    shortLabel: 'Venezuela',
-    sats: ["BB4", "BB5", "BB6"],
+    level: 0.1,
+    label: 'Op. Absolute Resolve — US raid captures Maduro',
+    shortLabel: 'Absolute Resolve',
+    sats: ["BB1"],
     aoiId: 'venezuela',
-    color: '#F5A623',
-    type: 'CORRELATED',
-    coverage: {
-      dwellMin: 183.5,
-      coveragePct: 12.7,
-      passes: 22,
-      maxConcurrent: 2,
-      satsAtEventMinute: 0,
-      medianGapMin: 17.5,
-      meanDailyDwellMin: 188.3,
-      typicalityRatio: 0.97,
-    },
-  },
-  {
-    id: 'dprk-salvo',
-    date: '2026-01-03T22:50:00Z',
-    level: 6.3,
-    label: 'DPRK Ballistic Missile Salvo',
-    shortLabel: 'DPRK',
-    sats: ["BB2", "BB3", "BB4"],
-    aoiId: 'north-korea',
-    color: '#FF6B00',
+    color: '#00FF88',
     type: 'ALIGNMENT',
-    coverage: {
-      dwellMin: 278.0,
-      coveragePct: 19.3,
-      passes: 32,
-      maxConcurrent: 2,
-      satsAtEventMinute: 0,
-      medianGapMin: 17.5,
-      meanDailyDwellMin: 291.3,
-      typicalityRatio: 0.95,
-    },
-  },
-  {
-    id: 'ukraine-barrage',
-    date: '2026-02-02T22:24:00Z',
-    level: 5.9,
-    label: 'Russia 450-Drone Barrage — Ukraine Energy',
-    shortLabel: 'Ukraine',
-    sats: ["BB6", "BB1", "BB2"],
-    aoiId: 'ukraine-east',
-    color: '#F5A623',
-    type: 'CORRELATED',
-    coverage: {
-      dwellMin: 264.0,
-      coveragePct: 18.3,
-      passes: 29,
-      maxConcurrent: 3,
-      satsAtEventMinute: 0,
-      medianGapMin: 18.0,
-      meanDailyDwellMin: 252.0,
-      typicalityRatio: 1.05,
+    critical: {
+      targetName: "Caracas (Maduro compound)",
+      targetLat: 10.49,
+      targetLng: -66.88,
+      coveredAtMoment: false,
+      satsAtMoment: [],
+      bestElevAtMomentDeg: 0.0,
+      nearestPassGapMin: 66.5,
+      nearestPassSignedMin: 66.5,
+      nearestPassSats: ["BB1"],
+      nearestPassElevDeg: 10.2,
+      passesInWindow: 4,
+      windowMin: 240,
+      timeConfidence: 'confirmed',
+      note: "Delta Force crossed into VE airspace 02:01 VET 3 Jan 2026",
     },
   },
   {
     id: 'epic-fury',
     date: '2026-02-28T06:15:00Z',
-    level: 8.4,
-    label: 'Op. Epic Fury — US/Israel Strike Iran',
+    level: 8.1,
+    label: 'Op. Epic Fury — US/Israel open strikes on Iran',
     shortLabel: 'Epic Fury',
-    sats: ["BB4", "BB6", "BB5"],
+    sats: ["BW3"],
     aoiId: 'iran',
     color: '#FF0040',
     type: 'CORRELATED',
-    coverage: {
-      dwellMin: 380.5,
-      coveragePct: 26.4,
-      passes: 41,
-      maxConcurrent: 3,
-      satsAtEventMinute: 0,
-      medianGapMin: 14.0,
-      meanDailyDwellMin: 363.2,
-      typicalityRatio: 1.05,
+    critical: {
+      targetName: "Tehran (Khamenei/command nodes)",
+      targetLat: 35.69,
+      targetLng: 51.39,
+      coveredAtMoment: false,
+      satsAtMoment: [],
+      bestElevAtMomentDeg: 0.0,
+      nearestPassGapMin: 3.2,
+      nearestPassSignedMin: 3.2,
+      nearestPassSats: ["BW3"],
+      nearestPassElevDeg: 10.3,
+      passesInWindow: 3,
+      windowMin: 240,
+      timeConfidence: 'confirmed',
+      note: "CENTCOM airstrikes begin 01:15 ET 28 Feb 2026",
+    },
+  },
+  {
+    id: 'ef-pilot-rescue',
+    date: '2026-04-03T08:10:00Z',
+    level: 8.2,
+    label: 'Epic Fury — Dude 44 pilot CSAR recovery',
+    shortLabel: 'Dude 44 Pilot',
+    sats: ["BB6"],
+    aoiId: 'iran',
+    color: '#FF0040',
+    type: 'CORRELATED',
+    parentOp: 'epic-fury',
+    critical: {
+      targetName: "Kohgiluyeh & Boyer-Ahmad (Dude 44 pilot)",
+      targetLat: 30.7,
+      targetLng: 51.6,
+      coveredAtMoment: false,
+      satsAtMoment: [],
+      bestElevAtMomentDeg: 0.0,
+      nearestPassGapMin: 3.0,
+      nearestPassSignedMin: 3.0,
+      nearestPassSats: ["BB6"],
+      nearestPassElevDeg: 10.2,
+      passesInWindow: 3,
+      windowMin: 240,
+      timeConfidence: 'approx',
+      note: "F-15E down ~04:40 IRST; pilot recovered ~7h later, 3 Apr 2026",
+    },
+  },
+  {
+    id: 'ef-wso-rescue',
+    date: '2026-04-04T23:30:00Z',
+    level: 0.0,
+    label: 'Epic Fury — Dude 44 WSO CSAR recovery',
+    shortLabel: 'Dude 44 WSO',
+    sats: [],
+    aoiId: 'iran',
+    color: '#00FF88',
+    type: 'ALIGNMENT',
+    parentOp: 'epic-fury',
+    critical: {
+      targetName: "Near Yasuj (Dude 44 WSO)",
+      targetLat: 30.67,
+      targetLng: 51.59,
+      coveredAtMoment: false,
+      satsAtMoment: [],
+      bestElevAtMomentDeg: 0.0,
+      nearestPassGapMin: 120.0,
+      nearestPassSignedMin: null,
+      nearestPassSats: [],
+      nearestPassElevDeg: 0.0,
+      passesInWindow: 0,
+      windowMin: 240,
+      timeConfidence: 'approx',
+      note: "WSO recovered ~03:00 IRST 5 Apr 2026 near Yasuj",
+    },
+  },
+  {
+    id: 'ef-hormuz-strike',
+    date: '2026-05-25T12:00:00Z',
+    level: 1.1,
+    label: 'Epic Fury ceasefire — US Hormuz self-defense strikes',
+    shortLabel: 'Hormuz Strikes',
+    sats: ["BB6"],
+    aoiId: 'hormuz',
+    color: '#00FF88',
+    type: 'ALIGNMENT',
+    parentOp: 'epic-fury',
+    critical: {
+      targetName: "Bandar Abbas / Strait of Hormuz",
+      targetLat: 27.18,
+      targetLng: 56.28,
+      coveredAtMoment: false,
+      satsAtMoment: [],
+      bestElevAtMomentDeg: 0.0,
+      nearestPassGapMin: 33.0,
+      nearestPassSignedMin: -33.0,
+      nearestPassSats: ["BB6"],
+      nearestPassElevDeg: 10.5,
+      passesInWindow: 4,
+      windowMin: 240,
+      timeConfidence: 'unconfirmed-time',
+      note: "US 'self-defense' strikes on IRGC boats + Bandar Abbas SAM, 25 May 2026 (time of day not reported)",
     },
   },
 ];
 
-// Timeline range
-export const TIMELINE_START = new Date('2025-04-01T00:00:00Z');
-export const TIMELINE_END_BUFFER_DAYS = 7; // extend past latest event
+export const TIMELINE_START = new Date('2025-05-15T00:00:00Z');
+export const TIMELINE_END_BUFFER_DAYS = 14;
