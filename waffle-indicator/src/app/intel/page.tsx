@@ -9,7 +9,8 @@ const TIMELINE = [
   {"date": "Feb 28, 2026", "op": "Op. Epic Fury \u2014 US/Israel open joint strikes on Iran", "opScore": 8.5, "phases": [{"name": "Opening strikes / Khamenei decapitation (Tehran)", "score": 1.9, "detail": "best pass 01:18 ET at 11\u00b0 elev (BW3); 2 min covered, 1 passes in window", "conf": "confirmed"}, {"name": "Nuclear facility strikes (Fordow)", "score": 8.5, "detail": "best pass 02:53 ET at 58\u00b0 elev (BW3); 7 min covered, 1 passes in window", "conf": "confirmed"}]},
   {"date": "Apr 3, 2026", "op": "Epic Fury sub-op \u2014 Dude 44 pilot CSAR recovery", "opScore": 1.9, "phases": [{"name": "Pilot extraction (Kohgiluyeh & Boyer-Ahmad)", "score": 1.9, "detail": "best pass 11:43 IRST at 11\u00b0 elev (BB6); 2 min covered, 1 passes in window", "conf": "approx"}]},
   {"date": "Apr 5, 2026", "op": "Epic Fury sub-op \u2014 Dude 44 WSO CSAR recovery", "opScore": 0.0, "phases": [{"name": "WSO extraction (near Yasuj)", "score": 0.0, "detail": "no waffle pass over the target during this phase window", "conf": "approx"}]},
-  {"date": "May 25, 2026", "op": "Epic Fury ceasefire \u2014 US Hormuz self-defense strikes", "opScore": null, "phases": [{"name": "Self-defense strikes (Bandar Abbas / Hormuz)", "score": null, "detail": "best pass 21:27 IRST at 86\u00b0 elev (BB1/BB5/BB6); 133 min covered, 20 passes in window", "conf": "time-unconfirmed"}]},
+  {"date": "Jul 7, 2026", "op": "Epic Fury ceasefire break \u2014 US strikes 80+ Strait of Hormuz targets", "opScore": 4.6, "phases": [{"name": "Strait of Hormuz strikes (Qeshm / Bandar Abbas / Sirik)", "score": 4.6, "detail": "best pass 01:16 IRST 08 Jul at 28\u00b0 elev (BB10/BB8/BB9/BW3); 14 min covered, 1 passes in window", "conf": "approx"}]},
+  {"date": "Jul 8, 2026", "op": "Epic Fury ceasefire break \u2014 US strikes ~90 sites incl. Bushehr", "opScore": 8.3, "phases": [{"name": "Bushehr / southern Iran strikes", "score": 8.3, "detail": "best pass 02:15 IRST 09 Jul at 56\u00b0 elev (BW3); 19 min covered, 2 passes in window", "conf": "approx"}]},
 ];
 
 export default function IntelPage() {
@@ -63,8 +64,8 @@ export default function IntelPage() {
           <h2 className="panel-header text-[14px]">PHASE COINCIDENCE</h2>
           <div className="grid grid-cols-4 gap-4 mb-4">
             <div className="text-center p-4 bg-[var(--color-card)] rounded">
-              <div className="text-[28px] font-bold text-[var(--color-ok)]">3 / 5</div>
-              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Scored ops with a strong phase</div>
+              <div className="text-[28px] font-bold text-[var(--color-ok)]">4 / 7</div>
+              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Events with a strong phase</div>
             </div>
             <div className="text-center p-4 bg-[var(--color-card)] rounded">
               <div className="text-[28px] font-bold text-[var(--color-waffle)]">61°</div>
@@ -81,11 +82,11 @@ export default function IntelPage() {
           </div>
           <div className="text-[11px] text-[var(--color-text-dim)] leading-relaxed space-y-2">
             <p>
-              Three of the five time-anchored operations had a well-placed pass during a critical phase: the Maduro
-              exfil (61°, BB4), the Epic Fury Fordow strike (58°, BW3), and Op. Midnight Hammer over Isfahan (56°,
-              BB1/BB5). One was a clean miss (the WSO extraction near Yasuj), and the rest had only grazing sub-11°
-              passes (the Epic Fury Tehran opening; the pilot recovery). The May 25 Hormuz strikes have no reported time of day, so they are left unscored — over a full
-              day a near-overhead pass is guaranteed, and pretending otherwise would fabricate a result.
+              Four of the seven time-anchored events had a well-placed pass during a critical phase: the Maduro
+              exfil (61°, BB4), the Epic Fury Fordow strike (58°, BW3), Op. Midnight Hammer over Isfahan (56°,
+              BB1/BB5), and the 7/8 ceasefire-break strike on Bushehr (56°, BW3). The 7/7 Hormuz strike caught only a
+              28° pass (4.6) — notably from the newer BB8/9/10 plane — while the WSO extraction near Yasuj was a clean
+              miss, and the Epic Fury Tehran opening and pilot recovery had only grazing sub-11° passes.
             </p>
             <p>
               Elevation is doing real work here: several &quot;near passes&quot; from the single-instant model turn out to be
