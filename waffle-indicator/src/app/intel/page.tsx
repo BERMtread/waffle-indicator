@@ -4,21 +4,21 @@ import Link from 'next/link';
 import { Ticker } from '@/components/dashboard/Ticker';
 
 const TIMELINE = [
-  { date: 'Feb 28, 2026', level: 9.8, event: 'Op. Epic Fury / Op. Roaring Lion. US + Israel joint strikes on Tehran, Isfahan, Qom, Karaj. Full constellation + BB6 aligned over Iran. Supreme Leader killed. Highest waffle ever recorded.', type: 'correlation' },
-  { date: 'Feb 2-3, 2026', level: 7.4, event: 'Russia launches 450 drones + 71 missiles at Ukraine energy grid. Massive barrage across Kyiv, Kharkiv, Odesa. BB3/BB1/BB6 over Eastern Ukraine.', type: 'correlation' },
+  { date: 'Feb 28, 2026', level: 8.4, event: 'Op. Epic Fury / Op. Roaring Lion. US + Israel joint strikes on Tehran, Isfahan, Qom, Karaj. Full constellation + BB6 aligned over Iran. Supreme Leader killed. Highest waffle ever recorded.', type: 'correlation' },
+  { date: 'Feb 2-3, 2026', level: 5.9, event: 'Russia launches 450 drones + 71 missiles at Ukraine energy grid. Massive barrage across Kyiv, Kharkiv, Odesa. BB3/BB1/BB6 over Eastern Ukraine.', type: 'correlation' },
   { date: 'Jan 27, 2026', level: 3.8, event: 'DPRK fires ballistic missiles into sea ahead of political congress. BB2/BB3 alignment over Korean Peninsula.', type: 'alignment' },
-  { date: 'Jan 4, 2026', level: 4.8, event: 'DPRK multiple ballistic missile salvo (900 km range). Kim orders 250% production increase. BB2/BB3 in footprint.', type: 'alignment' },
-  { date: 'Jan 3, 2026', level: 5.6, event: 'Op. Absolute Resolve. Delta Force captures Maduro in Caracas. US bombs Venezuelan air defenses. BW3/BB4/BB5 aligned.', type: 'correlation' },
-  { date: 'Dec 29-30, 2025', level: 8.1, event: 'PLA "Justice Mission 2025" — 130 aircraft sorties, 27 rockets from Fujian, 10 land in Taiwan contiguous zone. BB1/BB2/BB3/BB4 full coverage of Taiwan Strait.', type: 'correlation' },
+  { date: 'Jan 4, 2026', level: 6.3, event: 'DPRK multiple ballistic missile salvo (900 km range). Kim orders 250% production increase. BB2/BB3 in footprint.', type: 'alignment' },
+  { date: 'Jan 3, 2026', level: 4.2, event: 'Op. Absolute Resolve. Delta Force captures Maduro in Caracas. US bombs Venezuelan air defenses. BW3/BB4/BB5 aligned.', type: 'correlation' },
+  { date: 'Dec 29-30, 2025', level: 4.9, event: 'PLA "Justice Mission 2025" — 130 aircraft sorties, 27 rockets from Fujian, 10 land in Taiwan contiguous zone. BB1/BB2/BB3/BB4 full coverage of Taiwan Strait.', type: 'correlation' },
   { date: 'Dec 24, 2025', level: null, event: 'BB6 (Block 2) launched. 223 m² array — 3.5x larger than Block 1. Constellation at full strength.', type: 'launch' },
   { date: 'Dec 8, 2025', level: 6.0, event: 'RSF seizes Heglig oilfield (Sudan\'s largest). BB5/BB6 alignment over Kordofan region.', type: 'alignment' },
-  { date: 'Oct 26, 2025', level: 6.2, event: 'RSF overruns El Fasher after 500-day siege. Mass atrocity event. BW3/BB5/BB6 aligned over North Darfur.', type: 'correlation' },
+  { date: 'Oct 26, 2025', level: 4.8, event: 'RSF overruns El Fasher after 500-day siege. Mass atrocity event. BW3/BB5/BB6 aligned over North Darfur.', type: 'correlation' },
   { date: 'Aug 28, 2025', level: 5.1, event: 'Israeli airstrike kills Houthi PM in Sanaa. BB1/BB4 alignment over Yemen.', type: 'correlation' },
   { date: 'Aug 20, 2025', level: 4.2, event: 'China deploys armed boats to Second Thomas Shoal, 50m from BRP Sierra Madre. BB1/BB2 in SCS footprint.', type: 'alignment' },
-  { date: 'Aug 11, 2025', level: 4.5, event: 'China Coast Guard vessel collides with PLA Navy ship at Scarborough Shoal. BB1/BB2 aligned.', type: 'alignment' },
+  { date: 'Aug 11, 2025', level: 5.1, event: 'China Coast Guard vessel collides with PLA Navy ship at Scarborough Shoal. BB1/BB2 aligned.', type: 'alignment' },
   { date: 'Jun 21-22, 2025', level: 8.5, event: 'US joins Twelve-Day War — strikes Fordow, Natanz, Isfahan. BW3/BB1/BB4/BB5 over Iran. Second major Iran correlation.', type: 'correlation' },
-  { date: 'Jun 13, 2025', level: 9.2, event: 'Op. Rising Lion begins. Israel strikes Natanz, Isfahan, Fordow, Arak. Assassinates nuclear scientists. BW3/BB1/BB4/BB5 aligned.', type: 'correlation' },
-  { date: 'May 7, 2025', level: 7.0, event: 'Op. Sindoor. India strikes JeM/LeT targets in Pakistan + Azad Kashmir. BW3/BB2/BB4 aligned over India-Pakistan border.', type: 'correlation' },
+  { date: 'Jun 13, 2025', level: 7.1, event: 'Op. Rising Lion begins. Israel strikes Natanz, Isfahan, Fordow, Arak. Assassinates nuclear scientists. BW3/BB1/BB4/BB5 aligned.', type: 'correlation' },
+  { date: 'May 7, 2025', level: 5.3, event: 'Op. Sindoor. India strikes JeM/LeT targets in Pakistan + Azad Kashmir. BW3/BB2/BB4 aligned over India-Pakistan border.', type: 'correlation' },
   { date: 'May 4, 2025', level: 5.8, event: 'Houthi hypersonic missile evades THAAD/Arrow, strikes Ben Gurion Airport perimeter. BB1/BB5 over Red Sea/Yemen.', type: 'alignment' },
   { date: 'Sep 12, 2024', level: null, event: 'Block 1 BlueBirds launched (BB1-BB5). Constellation enters operational phase.', type: 'launch' },
 ];
@@ -44,62 +44,68 @@ export default function IntelPage() {
       <div className="flex-1 overflow-y-auto p-6 max-w-4xl mx-auto w-full">
         {/* Thesis */}
         <section className="panel p-6 mb-6">
-          <h2 className="panel-header text-[14px]">THE SYRUP THESIS</h2>
+          <h2 className="panel-header text-[14px]">THE SYRUP THESIS (v2 — COVERAGE MODEL)</h2>
           <div className="space-y-4 text-[12px] leading-relaxed text-[var(--color-text-dim)]">
             <p>
-              <span className="text-[var(--color-waffle)] font-bold">The Pizza Index is a lagging indicator.</span>{' '}
-              Late-night pizza deliveries near the Pentagon tell you something already happened. By the time Dominos
-              trucks are spotted at 2 AM, the operation is already underway.
+              <span className="text-[var(--color-waffle)] font-bold">The original pitch:</span>{' '}
+              when several ASTS &quot;waffles&quot; stack over a hotspot at the same instant, something is about to happen.
+              Rebuilt on real Space-Track historical TLEs, that framing does not hold up — and it&apos;s worth being honest about why.
             </p>
             <p>
-              <span className="text-[var(--color-ok)] font-bold">The Syrup Meter is a leading indicator.</span>{' '}
-              LEO orbital geometry is deterministic. AST SpaceMobile satellites have massive phased-array antennas
-              that look like waffles (64-223 m&sup2;). Their orbits are governed by Keplerian mechanics — you can predict
-              exactly where they&apos;ll be days or weeks in advance using SGP4 propagation from public TLE data.
+              <span className="text-[var(--color-danger)] font-bold">The Block-1 BlueBirds are a train, not a formation.</span>{' '}
+              BB1–BB5 launched together on 2024-09-12 into a single ~53° plane, so they trail each other like a string of pearls.
+              Which satellite is overhead at any given second is pure orbital phase, not intent. At the exact reported strike
+              minute of these nine events, the median number of waffles actually overhead was <span className="text-[var(--color-text)] font-bold">zero</span>.
             </p>
             <p>
-              <span className="text-[var(--color-danger)] font-bold">The core insight:</span>{' '}
-              When multiple ASTS &quot;waffles&quot; align over a geopolitical hotspot, it creates a coverage window.
-              Since June 2025, we&apos;ve tracked <span className="text-[var(--color-waffle)] font-bold">9 confirmed correlations</span> across
-              Iran, Ukraine, Taiwan, Pakistan, Sudan, and Venezuela — with a random coincidence probability well below 1%.
-              The Feb 28, 2026 joint US-Israel strike on Iran (Op. Epic Fury) hit syrup level 9.8 — the highest ever recorded.
+              <span className="text-[var(--color-ok)] font-bold">So we measure coverage over time instead.</span>{' '}
+              The v2 <span className="text-[var(--color-waffle)] font-bold">coverage score</span> integrates how LONG (dwell) and how
+              OFTEN (revisit cadence) the target is covered across a ±12h window, from SGP4-propagated real orbits.
+              These scores are reproducible — but they are a description of orbital geometry, not a warning light.
+            </p>
+            <p>
+              <span className="text-[var(--color-danger)] font-bold">The uncomfortable finding:</span>{' '}
+              coverage during every operation window is statistically identical to coverage on the ordinary days
+              around it (typicality ratio ≈ 1.0). These regions sit under the constellation ~13–26% of <em>every</em> day.
+              A &quot;correlation&quot; that is equally strong on a random Tuesday carries no predictive information.
             </p>
           </div>
         </section>
 
         {/* Statistical Evidence */}
         <section className="panel p-6 mb-6">
-          <h2 className="panel-header text-[14px]">STATISTICAL EVIDENCE</h2>
+          <h2 className="panel-header text-[14px]">WHAT THE REAL ORBITS SHOW</h2>
           <div className="grid grid-cols-4 gap-4 mb-4">
             <div className="text-center p-4 bg-[var(--color-card)] rounded">
-              <div className="text-[28px] font-bold text-[var(--color-danger)]">{'<'}0.1%</div>
-              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">P(Random Coincidence)</div>
+              <div className="text-[28px] font-bold text-[var(--color-danger)]">≈1.0</div>
+              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Typicality Ratio (event vs normal day)</div>
             </div>
             <div className="text-center p-4 bg-[var(--color-card)] rounded">
-              <div className="text-[28px] font-bold text-[var(--color-waffle)]">9</div>
-              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Confirmed Correlations</div>
+              <div className="text-[28px] font-bold text-[var(--color-waffle)]">0</div>
+              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Median Waffles At Strike Minute</div>
             </div>
             <div className="text-center p-4 bg-[var(--color-card)] rounded">
-              <div className="text-[28px] font-bold text-[var(--color-ok)]">6</div>
-              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">AOI Regions Hit</div>
+              <div className="text-[28px] font-bold text-[var(--color-ok)]">13–26%</div>
+              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">AOI Covered — Every Day</div>
             </div>
             <div className="text-center p-4 bg-[var(--color-card)] rounded">
-              <div className="text-[28px] font-bold text-[var(--color-blue)]">9.8</div>
-              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Peak Syrup (Iran)</div>
+              <div className="text-[28px] font-bold text-[var(--color-blue)]">8.4</div>
+              <div className="text-[9px] text-[var(--color-text-muted)] uppercase">Top Coverage Score (Iran)</div>
             </div>
           </div>
           <div className="text-[11px] text-[var(--color-text-dim)] leading-relaxed space-y-2">
             <p>
-              Since the Block 1 constellation became operational in late 2024, the syrup meter has correlated with
-              major military operations across 6 distinct geographic regions: Iran (3x), Ukraine, Taiwan Strait, Pakistan,
-              Sudan, and Venezuela. The Iran correlations are the strongest — Op. Rising Lion (Jun 2025, SYRUP 9.2),
-              US joining strikes (Jun 2025, SYRUP 8.5), and Op. Epic Fury (Feb 2026, SYRUP 9.8) all hit DROWNING thresholds.
+              Recomputed from real historical TLEs (SGP4, ±12h window, 30s steps), coverage scores range from
+              4.2 (Venezuela) to 8.4 (Iran / Op. Epic Fury). The ranking is driven almost entirely by AOI
+              latitude and size: higher-latitude, larger targets (Iran, Ukraine, North Korea) dwell longest under a
+              53°-inclination constellation that lingers near its turn-around latitudes. Venezuela and the Taiwan
+              Strait sit lower and smaller, so they score lowest — for reasons of geometry, not geopolitics.
             </p>
             <p>
-              The Dec 29 PLA Justice Mission blockade drill (SYRUP 8.1) and the India-Pakistan Op. Sindoor (SYRUP 7.0)
-              demonstrate coverage extends well beyond the Middle East. BB6&apos;s December 2025 launch (223 m&sup2; array,
-              2.5x weight) has significantly increased constellation capability — the Feb 28 Iran event was the first
-              full-constellation alignment including BB6.
+              Crucially, every event&apos;s window dwell lands within ±10% of the mean dwell on the adjacent control
+              days. The constellation covers each of these regions dozens of times a day, every day. The v2 score is
+              retained as an honest coverage-intensity readout; it should not be read as a leading indicator of
+              military action. This is a fun orbital-mechanics tracker, not intelligence.
             </p>
           </div>
         </section>

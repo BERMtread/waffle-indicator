@@ -51,12 +51,17 @@ export async function fetchHistoricalTLEs(
   date: Date
 ): Promise<Record<number, TLEData>> {
   const cookie = await getSessionCookie();
+  // Space-Track's "less-than-or-equal" predicate (%3C%3D) is silently ignored on
+  // the gp_history class and returns the LATEST TLE instead of the one before `date`.
+  // Use an explicit inclusive range [date-21d -- date+1d] and pick the newest row
+  // whose epoch is <= the target date. This reliably yields the real historical TLE.
   const endDate = `${formatISODate(date)}T23:59:59`;
+  const startDate = formatISODate(new Date(date.getTime() - 21 * 24 * 3600 * 1000));
 
-  // Parallel per-satellite queries — each returns the single most recent TLE before `date`
+  // Parallel per-satellite queries — each returns the most recent TLE at//before `date`
   const results = await Promise.allSettled(
     noradIds.map(async (id) => {
-      const url = `${SPACETRACK_BASE}/basicspacedata/query/class/gp_history/NORAD_CAT_ID/${id}/EPOCH/%3C%3D${endDate}/orderby/EPOCH%20desc/limit/1/format/tle`;
+      const url = `${SPACETRACK_BASE}/basicspacedata/query/class/gp_history/NORAD_CAT_ID/${id}/EPOCH/${startDate}--${endDate}/orderby/EPOCH%20desc/limit/1/format/tle`;
       const res = await fetch(url, { headers: { Cookie: cookie } });
       if (!res.ok) throw new Error(`Space-Track history fetch failed for ${id}: HTTP ${res.status}`);
       const parsed = parseTLEBlock(await res.text(), [id]);
