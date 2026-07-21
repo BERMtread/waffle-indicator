@@ -20,9 +20,9 @@ export function SatelliteTable({ positions, coverage }: Props) {
   return (
     <div className="panel p-3 overflow-hidden">
       <div className="panel-header">CONSTELLATION STATUS</div>
-      <div className="overflow-x-auto">
+      <div className="overflow-auto max-h-[240px]">
         <table className="w-full text-[11px] font-mono">
-          <thead>
+          <thead className="sticky top-0 z-10 bg-[var(--color-panel)]">
             <tr className="text-[var(--color-text-muted)] text-[9px] uppercase tracking-wider">
               <th className="text-left pb-2 pr-2">SAT</th>
               <th className="text-left pb-2 pr-2">CODE</th>
