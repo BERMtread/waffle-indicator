@@ -279,8 +279,10 @@ function AOIFill({ boundary, centroid, color }: { boundary: [number, number][]; 
 // ---------- Satellite Markers ----------
 const FAR_SIDE_COLOR = new THREE.Color('#1a2a44');
 const NEAR_SIDE_COLOR = new THREE.Color(SAT_COLOR);
+const FOCUS_COLOR = new THREE.Color('#FFB800');
 
-function SatelliteMarker({ pos }: { pos: SatPosition }) {
+function SatelliteMarker({ pos, focused = false }: { pos: SatPosition; focused?: boolean }) {
+  const nearColor = focused ? FOCUS_COLOR : NEAR_SIDE_COLOR;
   const glowRef = useRef<THREE.Mesh>(null);
   const dotRef = useRef<THREE.Mesh>(null);
   const labelWrapRef = useRef<HTMLDivElement>(null);
@@ -298,12 +300,12 @@ function SatelliteMarker({ pos }: { pos: SatPosition }) {
     if (glowRef.current) {
       const m = glowRef.current.material as THREE.MeshBasicMaterial;
       m.opacity = 0.02 + t * 0.13;
-      m.color.lerpColors(FAR_SIDE_COLOR, NEAR_SIDE_COLOR, t);
+      m.color.lerpColors(FAR_SIDE_COLOR, nearColor, t);
     }
     if (dotRef.current) {
       const m = dotRef.current.material as THREE.MeshBasicMaterial;
       m.opacity = 0.12 + t * 0.88;
-      m.color.lerpColors(FAR_SIDE_COLOR, NEAR_SIDE_COLOR, t);
+      m.color.lerpColors(FAR_SIDE_COLOR, nearColor, t);
     }
     if (labelWrapRef.current) {
       labelWrapRef.current.style.opacity = String(t * t); // quadratic falloff
@@ -314,13 +316,13 @@ function SatelliteMarker({ pos }: { pos: SatPosition }) {
     <group position={xyz}>
       {/* Glow sphere */}
       <mesh ref={glowRef}>
-        <sphereGeometry args={[0.035, 12, 12]} />
-        <meshBasicMaterial color={SAT_COLOR} transparent opacity={0.15} depthWrite={false} blending={THREE.AdditiveBlending} />
+        <sphereGeometry args={[focused ? 0.055 : 0.035, 12, 12]} />
+        <meshBasicMaterial color={focused ? '#FFB800' : SAT_COLOR} transparent opacity={0.15} depthWrite={false} blending={THREE.AdditiveBlending} />
       </mesh>
       {/* Main dot */}
       <mesh ref={dotRef}>
-        <sphereGeometry args={[0.014, 12, 12]} />
-        <meshBasicMaterial color={SAT_COLOR} transparent />
+        <sphereGeometry args={[focused ? 0.024 : 0.014, 12, 12]} />
+        <meshBasicMaterial color={focused ? '#FFB800' : SAT_COLOR} transparent />
       </mesh>
       {/* Labels */}
       <Html
@@ -330,7 +332,7 @@ function SatelliteMarker({ pos }: { pos: SatPosition }) {
         <div ref={labelWrapRef} style={{ transition: 'opacity 0.15s' }}>
           <div
             style={{
-              color: SAT_COLOR,
+              color: focused ? '#FFB800' : SAT_COLOR,
               fontSize: '9px',
               fontFamily: 'JetBrains Mono, monospace',
               fontWeight: 'bold',
@@ -358,11 +360,11 @@ function SatelliteMarker({ pos }: { pos: SatPosition }) {
   );
 }
 
-function SatelliteMarkers({ positions }: { positions: SatPosition[] }) {
+function SatelliteMarkers({ positions, focusSatId }: { positions: SatPosition[]; focusSatId?: string | null }) {
   return (
     <group>
       {positions.map(pos => (
-        <SatelliteMarker key={pos.satId} pos={pos} />
+        <SatelliteMarker key={pos.satId} pos={pos} focused={pos.satId === focusSatId} />
       ))}
     </group>
   );
@@ -579,6 +581,46 @@ function CameraAnimator({ selectedAOI }: { selectedAOI: AOIData | null }) {
   return null;
 }
 
+// ---------- Fly-to a specific satellite ----------
+function SatelliteCameraAnimator({
+  focusSat,
+  positions,
+}: {
+  focusSat: { satId: string; nonce: number } | null;
+  positions: SatPosition[];
+}) {
+  const { camera } = useThree();
+  const posRef = useRef(positions);
+  posRef.current = positions;
+  const prevNonce = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!focusSat || focusSat.nonce === prevNonce.current) return;
+    prevNonce.current = focusSat.nonce;
+    const sat = posRef.current.find((p) => p.satId === focusSat.satId);
+    if (!sat) return;
+
+    // Aim the camera at the satellite's current sub-point, zoomed in.
+    const subpoint = new THREE.Vector3(...latLngToVec3(sat.lat, sat.lng, R));
+    const cameraTarget = subpoint.clone().normalize().multiplyScalar(2.2);
+    cameraTarget.y += 0.2;
+
+    const startPos = camera.position.clone();
+    const duration = 700;
+    const startTime = Date.now();
+    const animate = () => {
+      const t = Math.min((Date.now() - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      camera.position.lerpVectors(startPos, cameraTarget, eased);
+      camera.lookAt(0, 0, 0);
+      if (t < 1) requestAnimationFrame(animate);
+    };
+    animate();
+  }, [focusSat, camera]);
+
+  return null;
+}
+
 // ---------- Slow Auto Rotation ----------
 function AutoRotate() {
   const groupRef = useRef<THREE.Group>(null);
@@ -600,9 +642,10 @@ interface SceneProps {
   aois: AOIData[];
   selectedAOI: AOIData | null;
   onSelectAOI?: (aoi: AOIData) => void;
+  focusSat?: { satId: string; nonce: number } | null;
 }
 
-function GlobeScene({ positions, trails, predictedPaths, aois, selectedAOI, onSelectAOI }: SceneProps) {
+function GlobeScene({ positions, trails, predictedPaths, aois, selectedAOI, onSelectAOI, focusSat }: SceneProps) {
   const [geoData, setGeoData] = useState<GeoJSON.FeatureCollection | null>(null);
 
   useEffect(() => {
@@ -631,7 +674,7 @@ function GlobeScene({ positions, trails, predictedPaths, aois, selectedAOI, onSe
 
       {/* Data overlays */}
       <AOIOverlays aois={aois} selectedAOI={selectedAOI} />
-      <SatelliteMarkers positions={positions} />
+      <SatelliteMarkers positions={positions} focusSatId={focusSat?.satId ?? null} />
       <FootprintRings positions={positions} />
       <GroundTracks trails={trails} positions={positions} />
       <PredictedTracks predictedPaths={predictedPaths} />
@@ -640,6 +683,7 @@ function GlobeScene({ positions, trails, predictedPaths, aois, selectedAOI, onSe
       {/* Interaction */}
       <GlobeClickHandler aois={aois} onSelectAOI={onSelectAOI} />
       <CameraAnimator selectedAOI={selectedAOI} />
+      <SatelliteCameraAnimator focusSat={focusSat ?? null} positions={positions} />
 
       {/* Controls */}
       <OrbitControls
@@ -662,9 +706,10 @@ interface Props {
   aois: AOIData[];
   selectedAOI: AOIData | null;
   onSelectAOI?: (aoi: AOIData) => void;
+  focusSat?: { satId: string; nonce: number } | null;
 }
 
-export function GlobeView({ positions, trails, predictedPaths, aois, selectedAOI, onSelectAOI }: Props) {
+export function GlobeView({ positions, trails, predictedPaths, aois, selectedAOI, onSelectAOI, focusSat }: Props) {
   return (
     <div className="w-full h-full" style={{ minHeight: 300 }}>
       <Canvas
@@ -679,6 +724,7 @@ export function GlobeView({ positions, trails, predictedPaths, aois, selectedAOI
           aois={aois}
           selectedAOI={selectedAOI}
           onSelectAOI={onSelectAOI}
+          focusSat={focusSat ?? null}
         />
       </Canvas>
     </div>

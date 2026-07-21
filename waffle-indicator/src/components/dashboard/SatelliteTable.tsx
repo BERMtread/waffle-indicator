@@ -10,9 +10,11 @@ const UNFURL_NOTE = new Map(SATELLITES.filter((m) => m.unfurlNote).map((m) => [m
 interface Props {
   positions: SatPosition[];
   coverage: AOICoverage | null;
+  selectedSatId?: string | null;
+  onSelectSat?: (satId: string) => void;
 }
 
-export function SatelliteTable({ positions, coverage }: Props) {
+export function SatelliteTable({ positions, coverage, selectedSatId, onSelectSat }: Props) {
   const inFP = new Set(coverage?.satsInFootprint.map(s => s.satId) ?? []);
   const approachMap = new Map(coverage?.satsApproaching.map(s => [s.satId, s]) ?? []);
   const fpMap = new Map(coverage?.satsInFootprint.map(s => [s.satId, s]) ?? []);
@@ -60,7 +62,12 @@ export function SatelliteTable({ positions, coverage }: Props) {
               return (
                 <tr
                   key={pos.satId}
-                  className="border-t border-[var(--color-border)] hover:bg-[rgba(255,255,255,0.02)]"
+                  onClick={() => onSelectSat?.(pos.satId)}
+                  className={`border-t border-[var(--color-border)] cursor-pointer transition-colors ${
+                    pos.satId === selectedSatId
+                      ? 'bg-[var(--color-waffle)]/15'
+                      : 'hover:bg-[rgba(255,255,255,0.02)]'
+                  }`}
                 >
                   <td className="py-1.5 pr-2">
                     <span

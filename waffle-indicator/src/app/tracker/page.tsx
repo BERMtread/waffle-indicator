@@ -35,6 +35,7 @@ const GlobeView = dynamic(
 export default function TrackerPage() {
   const [satellites, setSatellites] = useState<SatRecord[]>([]);
   const [selectedAOI, setSelectedAOI] = useState<AOIData | null>(null);
+  const [focusSat, setFocusSat] = useState<{ satId: string; nonce: number } | null>(null);
   const [utcTime, setUtcTime] = useState('');
   const [tleAge, setTleAge] = useState('LOADING...');
 
@@ -242,6 +243,7 @@ export default function TrackerPage() {
           {/* Globe */}
           <div className="panel flex-1 min-h-[400px] overflow-hidden">
             <GlobeView
+              focusSat={focusSat}
               positions={positions}
               trails={trails}
               predictedPaths={predictedPaths}
@@ -252,7 +254,12 @@ export default function TrackerPage() {
           </div>
 
           {/* Satellite Table */}
-          <SatelliteTable positions={positions} coverage={coverage} />
+          <SatelliteTable
+            positions={positions}
+            coverage={coverage}
+            selectedSatId={focusSat?.satId ?? null}
+            onSelectSat={(satId) => setFocusSat((f) => ({ satId, nonce: (f?.nonce ?? 0) + 1 }))}
+          />
         </div>
 
         {/* Right Sidebar */}
