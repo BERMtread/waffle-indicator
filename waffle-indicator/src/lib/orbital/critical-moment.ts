@@ -1,6 +1,6 @@
 import { type SatRecord, getPosition } from './propagator';
 import { footprintRadius, haversine } from '../geo/coverage-check';
-import { EARTH_RADIUS_KM } from './constants';
+import { EARTH_RADIUS_KM, isCorrelationEligible } from './constants';
 
 /**
  * Phase / best-pass methodology (v4).
@@ -58,6 +58,9 @@ export function scorePhase(
   stepSeconds = 10,
 ): PhaseResult {
   const { lat, lng } = target;
+  // Only satellites whose array is unfurled (correlation-eligible) at the phase
+  // time count. Excludes BB8 (unfurl unconfirmed) and BB9/BB10 before 2026-07-20.
+  satellites = satellites.filter((sat) => isCorrelationEligible(sat.meta, start));
   const steps = Math.floor((end.getTime() - start.getTime()) / (stepSeconds * 1000));
 
   let bestElev = 0, bestStart: Date | null = null;

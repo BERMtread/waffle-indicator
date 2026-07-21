@@ -9,19 +9,19 @@ const TIMELINE = [
   {"date": "Feb 28, 2026", "op": "Op. Epic Fury \u2014 US/Israel open joint strikes on Iran", "opScore": 8.5, "phases": [{"name": "Opening strikes / Khamenei decapitation (Tehran)", "score": 1.9, "detail": "best pass 01:18 ET at 11\u00b0 elev (BW3); 2 min covered, 1 passes in window", "conf": "confirmed"}, {"name": "Nuclear facility strikes (Fordow)", "score": 8.5, "detail": "best pass 02:53 ET at 58\u00b0 elev (BW3); 7 min covered, 1 passes in window", "conf": "confirmed"}]},
   {"date": "Apr 3, 2026", "op": "Epic Fury sub-op \u2014 Dude 44 pilot CSAR recovery", "opScore": 1.9, "phases": [{"name": "Pilot extraction (Kohgiluyeh & Boyer-Ahmad)", "score": 1.9, "detail": "best pass 11:43 IRST at 11\u00b0 elev (BB6); 2 min covered, 1 passes in window", "conf": "approx"}]},
   {"date": "Apr 5, 2026", "op": "Epic Fury sub-op \u2014 Dude 44 WSO CSAR recovery", "opScore": 0.0, "phases": [{"name": "WSO extraction (near Yasuj)", "score": 0.0, "detail": "no waffle pass over the target during this phase window", "conf": "approx"}]},
-  {"date": "Jul 7, 2026", "op": "Epic Fury ceasefire break \u2014 US strikes 80+ Strait of Hormuz targets", "opScore": 4.6, "phases": [{"name": "Strait of Hormuz strikes (Qeshm / Bandar Abbas / Sirik)", "score": 4.6, "detail": "best pass 01:16 IRST 08 Jul at 28\u00b0 elev (BB10/BB8/BB9/BW3); 14 min covered, 1 passes in window", "conf": "approx"}]},
-  {"date": "Jul 8, 2026", "op": "Epic Fury ceasefire break \u2014 US strikes ~90 sites incl. Bushehr", "opScore": 8.3, "phases": [{"name": "Bushehr / southern Iran strikes", "score": 8.3, "detail": "best pass 02:15 IRST 09 Jul at 56\u00b0 elev (BW3); 19 min covered, 2 passes in window", "conf": "approx"}]},
-  {"date": "Jul 11, 2026", "op": "Epic Fury ceasefire break 7/11 \u2014 US strikes Strait of Hormuz", "opScore": 9.9, "phases": [{"name": "Strait of Hormuz strike (7/11)", "score": 9.9, "detail": "best pass 03:54 IRST 12 Jul at 83\u00b0 elev (BB3); 47 min covered, 8 passes in window", "conf": "approx"}]},
-  {"date": "Jul 12, 2026", "op": "Epic Fury ceasefire break 7/12 \u2014 US strikes Strait of Hormuz", "opScore": 9.3, "phases": [{"name": "Strait of Hormuz strike (7/12)", "score": 9.3, "detail": "best pass 00:14 IRST 13 Jul at 69\u00b0 elev (BB10/BB8/BB9); 30 min covered, 6 passes in window", "conf": "approx"}]},
-  {"date": "Jul 13, 2026", "op": "Epic Fury ceasefire break 7/13 \u2014 US strikes Strait of Hormuz", "opScore": 10.0, "phases": [{"name": "Strait of Hormuz strike (7/13)", "score": 10.0, "detail": "best pass 00:01 IRST 14 Jul at 88\u00b0 elev (BB10/BB8/BB9); 26 min covered, 5 passes in window", "conf": "approx"}]},
-  {"date": "Jul 14, 2026", "op": "Epic Fury ceasefire break 7/14 \u2014 US strikes Strait of Hormuz", "opScore": 10.0, "phases": [{"name": "Strait of Hormuz strike (7/14)", "score": 10.0, "detail": "best pass 23:48 IRST 14 Jul at 86\u00b0 elev (BB10/BB8/BB9); 32 min covered, 6 passes in window", "conf": "approx"}]},
-  {"date": "Jul 15, 2026 (AM)", "op": "Epic Fury ceasefire break 7/15a \u2014 US strikes Strait of Hormuz", "opScore": 5.6, "phases": [{"name": "Strait of Hormuz strike (7/15a)", "score": 5.6, "detail": "best pass 15:12 IRST 15 Jul at 34\u00b0 elev (BB10/BB8/BB9); 28 min covered, 2 passes in window", "conf": "approx"}]},
-  {"date": "Jul 15, 2026 (PM)", "op": "Epic Fury ceasefire break 7/15b \u2014 US strikes Strait of Hormuz", "opScore": 9.3, "phases": [{"name": "Strait of Hormuz strike (7/15b)", "score": 9.3, "detail": "best pass 23:30 IRST 15 Jul at 68\u00b0 elev (BB10/BB8/BB9/BW3); 36 min covered, 4 passes in window", "conf": "approx"}]},
-  {"date": "Jul 16, 2026", "op": "Epic Fury ceasefire break 7/16 \u2014 US strikes Strait of Hormuz", "opScore": 7.9, "phases": [{"name": "Strait of Hormuz strike (7/16)", "score": 7.9, "detail": "best pass 23:23 IRST 16 Jul at 52\u00b0 elev (BB8/BB9); 26 min covered, 3 passes in window", "conf": "approx"}]},
-  {"date": "Jul 17, 2026", "op": "Epic Fury ceasefire break 7/17 \u2014 US strikes Strait of Hormuz", "opScore": 9.7, "phases": [{"name": "Strait of Hormuz strike (7/17)", "score": 9.7, "detail": "best pass 22:15 IRST 17 Jul at 76\u00b0 elev (BW3); 40 min covered, 4 passes in window", "conf": "approx"}]},
+  {"date": "Jul 7, 2026", "op": "Epic Fury ceasefire break \u2014 US strikes 80+ Strait of Hormuz targets", "opScore": 4.6, "phases": [{"name": "Strait of Hormuz strikes (Qeshm / Bandar Abbas / Sirik)", "score": 4.6, "detail": "best pass 01:16 IRST 08 Jul at 28\u00b0 elev (BW3); 6 min covered, 1 passes in window", "conf": "approx"}]},
+  {"date": "Jul 8, 2026", "op": "Epic Fury ceasefire break \u2014 US strikes ~90 sites incl. Bushehr", "opScore": 8.3, "phases": [{"name": "Bushehr / southern Iran strikes", "score": 8.3, "detail": "best pass 02:15 IRST 09 Jul at 56\u00b0 elev (BW3); 7 min covered, 1 passes in window", "conf": "approx"}]},
+  {"date": "Jul 11, 2026", "op": "Epic Fury ceasefire break 7/11 \u2014 US strikes Strait of Hormuz", "opScore": 9.9, "phases": [{"name": "Strait of Hormuz strike (7/11)", "score": 9.9, "detail": "best pass 03:54 IRST 12 Jul at 83\u00b0 elev (BB3); 39 min covered, 6 passes in window", "conf": "approx"}]},
+  {"date": "Jul 12, 2026", "op": "Epic Fury ceasefire break 7/12 \u2014 US strikes Strait of Hormuz", "opScore": 8.1, "phases": [{"name": "Strait of Hormuz strike (7/12)", "score": 8.1, "detail": "best pass 23:45 IRST 12 Jul at 54\u00b0 elev (BW3); 15 min covered, 4 passes in window", "conf": "approx"}]},
+  {"date": "Jul 13, 2026", "op": "Epic Fury ceasefire break 7/13 \u2014 US strikes Strait of Hormuz", "opScore": 2.9, "phases": [{"name": "Strait of Hormuz strike (7/13)", "score": 2.9, "detail": "best pass 01:57 IRST 14 Jul at 17\u00b0 elev (BB4); 11 min covered, 4 passes in window", "conf": "approx"}]},
+  {"date": "Jul 14, 2026", "op": "Epic Fury ceasefire break 7/14 \u2014 US strikes Strait of Hormuz", "opScore": 3.7, "phases": [{"name": "Strait of Hormuz strike (7/14)", "score": 3.7, "detail": "best pass 22:31 IRST 14 Jul at 22\u00b0 elev (BW3); 11 min covered, 2 passes in window", "conf": "approx"}]},
+  {"date": "Jul 15, 2026 (AM)", "op": "Epic Fury ceasefire break 7/15a \u2014 US strikes Strait of Hormuz", "opScore": 0.0, "phases": [{"name": "Strait of Hormuz strike (7/15a)", "score": 0.0, "detail": "no eligible-waffle pass over the target during this window", "conf": "approx"}]},
+  {"date": "Jul 15, 2026 (PM)", "op": "Epic Fury ceasefire break 7/15b \u2014 US strikes Strait of Hormuz", "opScore": 5.2, "phases": [{"name": "Strait of Hormuz strike (7/15b)", "score": 5.2, "detail": "best pass 23:30 IRST 15 Jul at 31\u00b0 elev (BW3); 10 min covered, 2 passes in window", "conf": "approx"}]},
+  {"date": "Jul 16, 2026", "op": "Epic Fury ceasefire break 7/16 \u2014 US strikes Strait of Hormuz", "opScore": 7.4, "phases": [{"name": "Strait of Hormuz strike (7/16)", "score": 7.4, "detail": "best pass 22:53 IRST 16 Jul at 48\u00b0 elev (BW3); 7 min covered, 1 passes in window", "conf": "approx"}]},
+  {"date": "Jul 17, 2026", "op": "Epic Fury ceasefire break 7/17 \u2014 US strikes Strait of Hormuz", "opScore": 9.7, "phases": [{"name": "Strait of Hormuz strike (7/17)", "score": 9.7, "detail": "best pass 22:15 IRST 17 Jul at 76\u00b0 elev (BW3); 10 min covered, 2 passes in window", "conf": "approx"}]},
   {"date": "Jul 18, 2026", "op": "Epic Fury ceasefire break 7/18 \u2014 US strikes Strait of Hormuz", "opScore": 9.2, "phases": [{"name": "Strait of Hormuz strike (7/18)", "score": 9.2, "detail": "best pass 01:04 IRST 19 Jul at 67\u00b0 elev (BB1/BB5); 44 min covered, 6 passes in window", "conf": "approx"}]},
   {"date": "Jul 19, 2026", "op": "Epic Fury ceasefire break 7/19 \u2014 US strikes Strait of Hormuz", "opScore": 6.7, "phases": [{"name": "Strait of Hormuz strike (7/19)", "score": 6.7, "detail": "best pass 02:52 IRST 20 Jul at 42\u00b0 elev (BB6); 19 min covered, 3 passes in window", "conf": "approx"}]},
-  {"date": "Jul 20, 2026", "op": "Epic Fury ceasefire break 7/20 \u2014 US strikes Strait of Hormuz", "opScore": 9.6, "phases": [{"name": "Strait of Hormuz strike (7/20)", "score": 9.6, "detail": "best pass 00:24 IRST 21 Jul at 74\u00b0 elev (BB1/BB5); 58 min covered, 8 passes in window", "conf": "approx"}]},
+  {"date": "Jul 20, 2026", "op": "Epic Fury ceasefire break 7/20 \u2014 US strikes Strait of Hormuz", "opScore": 9.6, "phases": [{"name": "Strait of Hormuz strike (7/20)", "score": 9.6, "detail": "best pass 00:24 IRST 21 Jul at 74\u00b0 elev (BB1/BB5); 55 min covered, 8 passes in window", "conf": "approx"}]},
 ];
 
 export default function IntelPage() {
@@ -166,17 +166,21 @@ export default function IntelPage() {
                 <th className="text-right pb-2">WEIGHT</th>
                 <th className="text-right pb-2">ARRAY</th>
                 <th className="text-left pb-2">LAUNCHED</th>
+                <th className="text-left pb-2">CORRELATION STATUS</th>
               </tr>
             </thead>
             <tbody>
               {[
-                { id: 'BW3', name: 'BlueWalker 3', norad: 53807, type: 'Prototype', weight: 3.5, array: '64 m²', launched: '2022-09-11', color: '#F5A623' },
-                { id: 'BB1', name: 'BlueBird 1', norad: 61047, type: 'Block 1', weight: 1.5, array: '64 m²', launched: '2024-09-12', color: '#FF6B35' },
-                { id: 'BB2', name: 'BlueBird 2', norad: 61048, type: 'Block 1', weight: 1.5, array: '64 m²', launched: '2024-09-12', color: '#FF6B35' },
-                { id: 'BB3', name: 'BlueBird 3', norad: 61045, type: 'Block 1', weight: 1.5, array: '64 m²', launched: '2024-09-12', color: '#FF6B35' },
-                { id: 'BB4', name: 'BlueBird 4', norad: 61049, type: 'Block 1', weight: 1.5, array: '64 m²', launched: '2024-09-12', color: '#FF6B35' },
-                { id: 'BB5', name: 'BlueBird 5', norad: 61046, type: 'Block 1', weight: 1.5, array: '64 m²', launched: '2024-09-12', color: '#FF6B35' },
-                { id: 'BB6', name: 'BlueBird 6', norad: 67232, type: 'Block 2', weight: 2.5, array: '223 m²', launched: '2025-12-24', color: '#00FF88' },
+                { id: 'BW3', name: 'BlueWalker 3', norad: 53807, type: 'Prototype', weight: 3.5, array: '64 m²', launched: '2022-09-11', color: '#F5A623', note: 'Operational' },
+                { id: 'BB1', name: 'BlueBird 1', norad: 61047, type: 'Block 1', weight: 1.5, array: '64 m²', launched: '2024-09-12', color: '#FF6B35', note: 'Operational' },
+                { id: 'BB2', name: 'BlueBird 2', norad: 61048, type: 'Block 1', weight: 1.5, array: '64 m²', launched: '2024-09-12', color: '#FF6B35', note: 'Operational' },
+                { id: 'BB3', name: 'BlueBird 3', norad: 61045, type: 'Block 1', weight: 1.5, array: '64 m²', launched: '2024-09-12', color: '#FF6B35', note: 'Operational' },
+                { id: 'BB4', name: 'BlueBird 4', norad: 61049, type: 'Block 1', weight: 1.5, array: '64 m²', launched: '2024-09-12', color: '#FF6B35', note: 'Operational' },
+                { id: 'BB5', name: 'BlueBird 5', norad: 61046, type: 'Block 1', weight: 1.5, array: '64 m²', launched: '2024-09-12', color: '#FF6B35', note: 'Operational' },
+                { id: 'BB6', name: 'BlueBird 6', norad: 67232, type: 'Block 2', weight: 2.5, array: '223 m²', launched: '2025-12-24', color: '#00FF88', note: 'Operational' },
+                { id: 'BB8', name: 'BlueBird 8', norad: 69589, type: 'Block 2', weight: 2.5, array: '223 m²', launched: '2026-06-17', color: '#888888', note: 'Unfurl UNCONFIRMED — excluded from correlation' },
+                { id: 'BB9', name: 'BlueBird 9', norad: 69590, type: 'Block 2', weight: 2.5, array: '223 m²', launched: '2026-06-17', color: '#00FF88', note: 'Unfurled 7/20/26 — eligible from 7/20' },
+                { id: 'BB10', name: 'BlueBird 10', norad: 69591, type: 'Block 2', weight: 2.5, array: '223 m²', launched: '2026-06-17', color: '#00FF88', note: 'Unfurled 7/20/26 — eligible from 7/20' },
               ].map((sat) => (
                 <tr key={sat.id} className="border-t border-[var(--color-border)]">
                   <td className="py-1.5"><span className="inline-block w-2 h-2 rounded-full mr-1" style={{ backgroundColor: sat.color }} />{sat.id}</td>
@@ -186,6 +190,7 @@ export default function IntelPage() {
                   <td className="py-1.5 text-right font-bold" style={{ color: sat.color }}>{sat.weight}</td>
                   <td className="py-1.5 text-right">{sat.array}</td>
                   <td className="py-1.5 text-[var(--color-text-dim)]">{sat.launched}</td>
+                  <td className="py-1.5 text-[9px]" style={{ color: sat.note === 'Operational' ? 'var(--color-text-muted)' : sat.note.includes('UNCONFIRMED') ? 'var(--color-danger)' : 'var(--color-warn)' }}>{sat.note}</td>
                 </tr>
               ))}
             </tbody>

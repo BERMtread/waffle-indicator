@@ -8,19 +8,24 @@ export interface SatelliteMeta {
   color: string;
   arraySize: string;
   launched: string;
+  // Correlation eligibility: the array must be unfurled to count as a "waffle".
+  // correlationFrom = ISO date from which this sat is usable for correlation
+  //   (null = unfurl not officially confirmed -> excluded entirely).
+  correlationFrom: string | null;
+  unfurlNote?: string;
 }
 
 export const SATELLITES: SatelliteMeta[] = [
-  { id: 'bw3', name: 'BlueWalker 3', codename: 'OG WAFFLE', noradId: 53807, type: 'prototype', weight: 3.5, color: '#FFB800', arraySize: '64 m²', launched: '2022-09-11' },
-  { id: 'bb1', name: 'BlueBird 1', codename: 'BLUEBIRD-C', noradId: 61047, type: 'block1', weight: 1.5, color: '#FF6B35', arraySize: '64 m²', launched: '2024-09-12' },
-  { id: 'bb2', name: 'BlueBird 2', codename: 'BLUEBIRD-D', noradId: 61048, type: 'block1', weight: 1.5, color: '#FF6B35', arraySize: '64 m²', launched: '2024-09-12' },
-  { id: 'bb3', name: 'BlueBird 3', codename: 'BLUEBIRD-A', noradId: 61045, type: 'block1', weight: 1.5, color: '#FF6B35', arraySize: '64 m²', launched: '2024-09-12' },
-  { id: 'bb4', name: 'BlueBird 4', codename: 'BLUEBIRD-E', noradId: 61049, type: 'block1', weight: 1.5, color: '#FF6B35', arraySize: '64 m²', launched: '2024-09-12' },
-  { id: 'bb5', name: 'BlueBird 5', codename: 'BLUEBIRD-B', noradId: 61046, type: 'block1', weight: 1.5, color: '#FF6B35', arraySize: '64 m²', launched: '2024-09-12' },
-  { id: 'bb6', name: 'BlueBird 6', codename: 'BLOCK-2', noradId: 67232, type: 'block2', weight: 2.5, color: '#00FF88', arraySize: '223 m²', launched: '2025-12-24' },
-  { id: 'bb8', name: 'BlueBird 8', codename: 'BLUEBIRD OBJECT A', noradId: 69589, type: 'block2', weight: 2.5, color: '#00FF88', arraySize: '223 m²', launched: '2026-06-17' },
-  { id: 'bb9', name: 'BlueBird 9', codename: 'BLUEBIRD OBJECT B', noradId: 69590, type: 'block2', weight: 2.5, color: '#00FF88', arraySize: '223 m²', launched: '2026-06-17' },
-  { id: 'bb10', name: 'BlueBird 10', codename: 'BLUEBIRD OBJECT C', noradId: 69591, type: 'block2', weight: 2.5, color: '#00FF88', arraySize: '223 m²', launched: '2026-06-17' },
+  { id: 'bw3', name: 'BlueWalker 3', codename: 'OG WAFFLE', noradId: 53807, type: 'prototype', weight: 3.5, color: '#FFB800', arraySize: '64 m²', launched: '2022-09-11', correlationFrom: '2022-10-01' },
+  { id: 'bb1', name: 'BlueBird 1', codename: 'BLUEBIRD-C', noradId: 61047, type: 'block1', weight: 1.5, color: '#FF6B35', arraySize: '64 m²', launched: '2024-09-12', correlationFrom: '2024-10-01' },
+  { id: 'bb2', name: 'BlueBird 2', codename: 'BLUEBIRD-D', noradId: 61048, type: 'block1', weight: 1.5, color: '#FF6B35', arraySize: '64 m²', launched: '2024-09-12', correlationFrom: '2024-10-01' },
+  { id: 'bb3', name: 'BlueBird 3', codename: 'BLUEBIRD-A', noradId: 61045, type: 'block1', weight: 1.5, color: '#FF6B35', arraySize: '64 m²', launched: '2024-09-12', correlationFrom: '2024-10-01' },
+  { id: 'bb4', name: 'BlueBird 4', codename: 'BLUEBIRD-E', noradId: 61049, type: 'block1', weight: 1.5, color: '#FF6B35', arraySize: '64 m²', launched: '2024-09-12', correlationFrom: '2024-10-01' },
+  { id: 'bb5', name: 'BlueBird 5', codename: 'BLUEBIRD-B', noradId: 61046, type: 'block1', weight: 1.5, color: '#FF6B35', arraySize: '64 m²', launched: '2024-09-12', correlationFrom: '2024-10-01' },
+  { id: 'bb6', name: 'BlueBird 6', codename: 'BLOCK-2', noradId: 67232, type: 'block2', weight: 2.5, color: '#00FF88', arraySize: '223 m²', launched: '2025-12-24', correlationFrom: '2026-01-01' },
+  { id: 'bb8', name: 'BlueBird 8', codename: 'BLUEBIRD OBJECT A', noradId: 69589, type: 'block2', weight: 2.5, color: '#00FF88', arraySize: '223 m²', launched: '2026-06-17', correlationFrom: null, unfurlNote: 'Unfurl unconfirmed by AST — excluded from correlation' },
+  { id: 'bb9', name: 'BlueBird 9', codename: 'BLUEBIRD OBJECT B', noradId: 69590, type: 'block2', weight: 2.5, color: '#00FF88', arraySize: '223 m²', launched: '2026-06-17', correlationFrom: '2026-07-20', unfurlNote: 'Unfurled 2026-07-20 — correlation-eligible from 7/20' },
+  { id: 'bb10', name: 'BlueBird 10', codename: 'BLUEBIRD OBJECT C', noradId: 69591, type: 'block2', weight: 2.5, color: '#00FF88', arraySize: '223 m²', launched: '2026-06-17', correlationFrom: '2026-07-20', unfurlNote: 'Unfurled 2026-07-20 — correlation-eligible from 7/20' },
 ];
 
 export const NORAD_IDS = SATELLITES.map(s => s.noradId);
@@ -129,3 +134,9 @@ export const ASTS_ALTITUDE_KM = 510;
 export const ASTS_INCLINATION_DEG = 53;
 export const DEFAULT_MIN_ELEVATION_DEG = 10;
 export const DEFAULT_FOOTPRINT_KM = 1580;
+
+// Whether a satellite's array is unfurled and thus usable for correlation at `date`.
+export function isCorrelationEligible(meta: SatelliteMeta, date: Date): boolean {
+  if (!meta.correlationFrom) return false;            // unfurl unconfirmed
+  return date.getTime() >= new Date(meta.correlationFrom).getTime();
+}

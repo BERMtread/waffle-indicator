@@ -3,6 +3,9 @@
 import { type SatPosition } from '@/lib/orbital/propagator';
 import { type AOICoverage } from '@/lib/orbital/alignment-scorer';
 import { formatCoord, formatAltitude, formatDistance } from '@/lib/utils/format';
+import { SATELLITES } from '@/lib/orbital/constants';
+
+const UNFURL_NOTE = new Map(SATELLITES.filter((m) => m.unfurlNote).map((m) => [m.id, m.unfurlNote as string]));
 
 interface Props {
   positions: SatPosition[];
@@ -66,7 +69,14 @@ export function SatelliteTable({ positions, coverage }: Props) {
                     />
                     {pos.satId.toUpperCase()}
                   </td>
-                  <td className="py-1.5 pr-2 text-[var(--color-text-dim)]">{pos.codename}</td>
+                  <td className="py-1.5 pr-2 text-[var(--color-text-dim)]">
+                    {pos.codename}
+                    {UNFURL_NOTE.has(pos.satId) && (
+                      <div className="text-[8px] text-[var(--color-warn)] not-italic leading-tight mt-0.5">
+                        ⚠ {UNFURL_NOTE.get(pos.satId)}
+                      </div>
+                    )}
+                  </td>
                   <td className="py-1.5 pr-2 text-right">{formatCoord(pos.lat, 'lat')}</td>
                   <td className="py-1.5 pr-2 text-right">{formatCoord(pos.lng, 'lng')}</td>
                   <td className="py-1.5 pr-2 text-right text-[var(--color-text-dim)]">
