@@ -178,7 +178,7 @@ export default function IntelPage() {
                 { id: 'BB4', name: 'BlueBird 4', norad: 61049, type: 'Block 1', weight: 1.5, array: '64 m²', launched: '2024-09-12', color: '#FF6B35', note: 'Operational' },
                 { id: 'BB5', name: 'BlueBird 5', norad: 61046, type: 'Block 1', weight: 1.5, array: '64 m²', launched: '2024-09-12', color: '#FF6B35', note: 'Operational' },
                 { id: 'BB6', name: 'BlueBird 6', norad: 67232, type: 'Block 2', weight: 2.5, array: '223 m²', launched: '2025-12-24', color: '#00FF88', note: 'Operational' },
-                { id: 'BB8', name: 'BlueBird 8', norad: 69589, type: 'Block 2', weight: 2.5, array: '223 m²', launched: '2026-06-17', color: '#888888', note: 'Unfurl UNCONFIRMED — excluded from correlation' },
+                { id: 'BB8', name: 'BlueBird 8', norad: 69589, type: 'Block 2', weight: 2.5, array: '223 m²', launched: '2026-06-17', color: '#00FF88', note: 'Unfurled 7/21/26 — eligible from 7/21' },
                 { id: 'BB9', name: 'BlueBird 9', norad: 69590, type: 'Block 2', weight: 2.5, array: '223 m²', launched: '2026-06-17', color: '#00FF88', note: 'Unfurled 7/20/26 — eligible from 7/20' },
                 { id: 'BB10', name: 'BlueBird 10', norad: 69591, type: 'Block 2', weight: 2.5, array: '223 m²', launched: '2026-06-17', color: '#00FF88', note: 'Unfurled 7/20/26 — eligible from 7/20' },
               ].map((sat) => (
